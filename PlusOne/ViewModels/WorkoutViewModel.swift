@@ -51,24 +51,26 @@ class WorkoutViewModel: ObservableObject {
             workout.addSet(workoutSet)
         }
 
-        // Generate BBB sets
-        let bbbSets = WendlerCalculator.calculateBBBSets(
-            trainingMax: tm.weight,
-            bbbPercentage: settings.bbbPercentage,
-            availablePlates: settings.availablePlates,
-            barWeight: settings.barWeight
-        )
-
-        for (index, set) in bbbSets.enumerated() {
-            let workoutSet = WorkoutSet(
-                setNumber: mainSets.count + index,
-                targetWeight: set.weight,
-                targetReps: set.reps,
-                isAMRAP: false,
-                isBBB: true
+        // Generate BBB sets (skip on deload week)
+        if week != 4 {
+            let bbbSets = WendlerCalculator.calculateBBBSets(
+                trainingMax: tm.weight,
+                bbbPercentage: settings.bbbPercentage,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
             )
-            workoutSet.workout = workout
-            workout.addSet(workoutSet)
+
+            for (index, set) in bbbSets.enumerated() {
+                let workoutSet = WorkoutSet(
+                    setNumber: mainSets.count + index,
+                    targetWeight: set.weight,
+                    targetReps: set.reps,
+                    isAMRAP: false,
+                    isBBB: true
+                )
+                workoutSet.workout = workout
+                workout.addSet(workoutSet)
+            }
         }
 
         return workout

@@ -40,8 +40,10 @@ struct TodayWorkoutView: View {
                             // Main sets section
                             setsSection(title: "Main Sets", sets: workout.mainSets)
 
-                            // BBB sets section
-                            setsSection(title: "BBB Sets (5×10)", sets: workout.bbbSets)
+                            // BBB sets section (hidden on deload week)
+                            if !workout.bbbSets.isEmpty {
+                                setsSection(title: "BBB Sets (5×10)", sets: workout.bbbSets)
+                            }
 
                             // Complete workout button
                             if (workout.sets ?? []).allSatisfy({ $0.isComplete }) {
