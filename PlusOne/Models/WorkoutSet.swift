@@ -4,15 +4,15 @@ import SwiftData
 @Model
 final class WorkoutSet {
     var id: UUID = UUID()
-    var setNumber: Int
-    var targetWeight: Double
-    var targetReps: Int
-    var actualReps: Int?
+    var setNumber: Int = 0
+    var targetWeight: Double = 0
+    var targetReps: Int = 0
+    var actualReps: Int? = nil
     var isAMRAP: Bool = false
     var isBBB: Bool = false
     var isComplete: Bool = false
-    var completedAt: Date?
-    var workout: Workout?
+    var completedAt: Date? = nil
+    var workout: Workout? = nil
 
     init(
         setNumber: Int,

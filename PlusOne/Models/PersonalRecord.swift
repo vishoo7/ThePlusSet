@@ -4,12 +4,12 @@ import SwiftData
 @Model
 final class PersonalRecord {
     var id: UUID = UUID()
-    var liftTypeRaw: String
-    var weight: Double
-    var reps: Int
-    var estimated1RM: Double
-    var date: Date
-    var workoutSetId: UUID?
+    var liftTypeRaw: String = "Squat"
+    var weight: Double = 0
+    var reps: Int = 0
+    var estimated1RM: Double = 0
+    var date: Date = Date()
+    var workoutSetId: UUID? = nil
 
     var liftType: LiftType {
         get { LiftType(rawValue: liftTypeRaw) ?? .squat }

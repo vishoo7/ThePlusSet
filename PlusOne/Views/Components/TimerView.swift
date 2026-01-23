@@ -33,25 +33,47 @@ struct TimerView: View {
             }
             .frame(width: 180, height: 180)
 
-            // Controls
-            HStack(spacing: 20) {
+            // Time adjustment controls
+            HStack(spacing: 12) {
+                Button {
+                    onAddTime(-30)
+                } label: {
+                    Text("-30s")
+                        .font(.subheadline)
+                        .frame(width: 50)
+                }
+                .buttonStyle(.bordered)
+                .disabled(timerVM.remainingSeconds <= 30)
+
                 Button {
                     onAddTime(30)
                 } label: {
-                    Label("+30s", systemImage: "plus.circle")
+                    Text("+30s")
                         .font(.subheadline)
+                        .frame(width: 50)
                 }
                 .buttonStyle(.bordered)
 
                 Button {
-                    onStop()
+                    onAddTime(60)
                 } label: {
-                    Label("Skip", systemImage: "forward.fill")
+                    Text("+1m")
                         .font(.subheadline)
+                        .frame(width: 50)
                 }
                 .buttonStyle(.bordered)
-                .tint(.orange)
             }
+
+            // Skip button
+            Button {
+                onStop()
+            } label: {
+                Label("Skip Rest", systemImage: "forward.fill")
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .tint(.orange)
         }
         .padding()
         .background(Color(.systemBackground))

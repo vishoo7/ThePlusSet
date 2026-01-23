@@ -6,28 +6,36 @@ struct PlusOneApp: App {
     let modelContainer: ModelContainer
 
     init() {
-        do {
-            let schema = Schema([
-                AppSettings.self,
-                TrainingMax.self,
-                CycleProgress.self,
-                Workout.self,
-                WorkoutSet.self,
-                PersonalRecord.self
-            ])
+        let schema = Schema([
+            AppSettings.self,
+            TrainingMax.self,
+            CycleProgress.self,
+            Workout.self,
+            WorkoutSet.self,
+            PersonalRecord.self
+        ])
 
-            let modelConfiguration = ModelConfiguration(
+        // Try CloudKit first, fall back to local-only if it fails
+        // CloudKit requires proper signing with a Development Team
+        do {
+            let cloudConfig = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
                 cloudKitDatabase: .automatic
             )
-
-            modelContainer = try ModelContainer(
-                for: schema,
-                configurations: [modelConfiguration]
-            )
+            modelContainer = try ModelContainer(for: schema, configurations: [cloudConfig])
         } catch {
-            fatalError("Could not initialize ModelContainer: \(error)")
+            print("CloudKit failed, using local storage: \(error)")
+            do {
+                let localConfig = ModelConfiguration(
+                    schema: schema,
+                    isStoredInMemoryOnly: false,
+                    cloudKitDatabase: .none
+                )
+                modelContainer = try ModelContainer(for: schema, configurations: [localConfig])
+            } catch {
+                fatalError("Could not initialize ModelContainer: \(error)")
+            }
         }
     }
 

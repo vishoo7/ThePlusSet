@@ -3,9 +3,9 @@ import SwiftData
 
 @Model
 final class TrainingMax {
-    var liftTypeRaw: String
-    var weight: Double
-    var updatedAt: Date
+    var liftTypeRaw: String = "Squat"
+    var weight: Double = 0
+    var updatedAt: Date = Date()
 
     var liftType: LiftType {
         get { LiftType(rawValue: liftTypeRaw) ?? .squat }

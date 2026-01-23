@@ -82,35 +82,40 @@ struct SettingsView: View {
 
                 // Rest Timer Section
                 Section("Rest Timer") {
-                    HStack {
-                        Text("Main Sets")
-                        Spacer()
-                        Picker("", selection: Binding(
-                            get: { settings.mainSetRestSeconds },
-                            set: { settings.mainSetRestSeconds = $0 }
-                        )) {
-                            Text("2 min").tag(120)
-                            Text("2.5 min").tag(150)
-                            Text("3 min").tag(180)
-                            Text("4 min").tag(240)
-                            Text("5 min").tag(300)
+                    NavigationLink {
+                        TimerSettingsView(
+                            title: "Main Sets Rest",
+                            seconds: Binding(
+                                get: { settings.mainSetRestSeconds },
+                                set: { settings.mainSetRestSeconds = $0 }
+                            ),
+                            presets: [120, 150, 180, 240, 300]
+                        )
+                    } label: {
+                        HStack {
+                            Text("Main Sets")
+                            Spacer()
+                            Text(formatTime(settings.mainSetRestSeconds))
+                                .foregroundStyle(.secondary)
                         }
-                        .pickerStyle(.menu)
                     }
 
-                    HStack {
-                        Text("BBB Sets")
-                        Spacer()
-                        Picker("", selection: Binding(
-                            get: { settings.bbbSetRestSeconds },
-                            set: { settings.bbbSetRestSeconds = $0 }
-                        )) {
-                            Text("60 sec").tag(60)
-                            Text("90 sec").tag(90)
-                            Text("2 min").tag(120)
-                            Text("2.5 min").tag(150)
+                    NavigationLink {
+                        TimerSettingsView(
+                            title: "BBB Sets Rest",
+                            seconds: Binding(
+                                get: { settings.bbbSetRestSeconds },
+                                set: { settings.bbbSetRestSeconds = $0 }
+                            ),
+                            presets: [60, 90, 120, 150, 180]
+                        )
+                    } label: {
+                        HStack {
+                            Text("BBB Sets")
+                            Spacer()
+                            Text(formatTime(settings.bbbSetRestSeconds))
+                                .foregroundStyle(.secondary)
                         }
-                        .pickerStyle(.menu)
                     }
                 }
 
@@ -154,6 +159,16 @@ struct SettingsView: View {
     private func syncNow() {
         // Trigger save to force CloudKit sync
         try? modelContext.save()
+    }
+
+    private func formatTime(_ seconds: Int) -> String {
+        let mins = seconds / 60
+        let secs = seconds % 60
+        if secs == 0 {
+            return "\(mins) min"
+        } else {
+            return "\(mins):\(String(format: "%02d", secs))"
+        }
     }
 }
 
@@ -222,6 +237,105 @@ struct PlateEditorSheet: View {
             .onAppear {
                 plates = settings.availablePlates
             }
+        }
+    }
+}
+
+// MARK: - Timer Settings View
+
+struct TimerSettingsView: View {
+    let title: String
+    @Binding var seconds: Int
+    let presets: [Int]
+
+    @State private var minutes: Int = 0
+    @State private var secs: Int = 0
+
+    var body: some View {
+        List {
+            // Custom time picker
+            Section("Custom Time") {
+                HStack {
+                    Picker("Minutes", selection: $minutes) {
+                        ForEach(0..<11) { min in
+                            Text("\(min) min").tag(min)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 120)
+
+                    Picker("Seconds", selection: $secs) {
+                        ForEach([0, 15, 30, 45], id: \.self) { sec in
+                            Text("\(sec) sec").tag(sec)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(width: 120)
+                }
+                .frame(height: 120)
+                .onChange(of: minutes) { _, _ in updateSeconds() }
+                .onChange(of: secs) { _, _ in updateSeconds() }
+            }
+
+            // Presets
+            Section("Quick Presets") {
+                ForEach(presets, id: \.self) { preset in
+                    Button {
+                        seconds = preset
+                        loadFromSeconds()
+                    } label: {
+                        HStack {
+                            Text(formatPreset(preset))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if seconds == preset {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Current selection display
+            Section {
+                HStack {
+                    Text("Current")
+                    Spacer()
+                    Text(formatPreset(seconds))
+                        .font(.headline)
+                        .foregroundStyle(.blue)
+                }
+            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            loadFromSeconds()
+        }
+    }
+
+    private func loadFromSeconds() {
+        minutes = seconds / 60
+        secs = (seconds % 60 / 15) * 15 // Round to nearest 15 seconds
+    }
+
+    private func updateSeconds() {
+        let newValue = minutes * 60 + secs
+        if newValue > 0 {
+            seconds = newValue
+        }
+    }
+
+    private func formatPreset(_ totalSeconds: Int) -> String {
+        let mins = totalSeconds / 60
+        let secs = totalSeconds % 60
+        if secs == 0 {
+            return "\(mins) min"
+        } else if mins == 0 {
+            return "\(secs) sec"
+        } else {
+            return "\(mins):\(String(format: "%02d", secs))"
         }
     }
 }

@@ -46,11 +46,15 @@ class TimerViewModel: ObservableObject {
     }
 
     func addTime(seconds: Int) {
-        remainingSeconds += seconds
-        totalSeconds += seconds
+        let newRemaining = max(1, remainingSeconds + seconds)
+        let newTotal = max(1, totalSeconds + seconds)
+        remainingSeconds = newRemaining
+        totalSeconds = newTotal
         // Reschedule notification
         notificationManager.cancelRestTimerNotification()
-        notificationManager.scheduleRestTimerNotification(seconds: remainingSeconds)
+        if remainingSeconds > 0 {
+            notificationManager.scheduleRestTimerNotification(seconds: remainingSeconds)
+        }
     }
 
     private func tick() {

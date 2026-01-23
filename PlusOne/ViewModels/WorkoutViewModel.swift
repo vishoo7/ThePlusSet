@@ -48,7 +48,7 @@ class WorkoutViewModel: ObservableObject {
                 isBBB: false
             )
             workoutSet.workout = workout
-            workout.sets.append(workoutSet)
+            workout.addSet(workoutSet)
         }
 
         // Generate BBB sets
@@ -68,7 +68,7 @@ class WorkoutViewModel: ObservableObject {
                 isBBB: true
             )
             workoutSet.workout = workout
-            workout.sets.append(workoutSet)
+            workout.addSet(workoutSet)
         }
 
         return workout
@@ -79,7 +79,7 @@ class WorkoutViewModel: ObservableObject {
 
         // Check for workout completion
         if let workout = currentWorkout {
-            let allComplete = workout.sets.allSatisfy { $0.isComplete }
+            let allComplete = (workout.sets ?? []).allSatisfy { $0.isComplete }
             if allComplete {
                 workout.isComplete = true
             }

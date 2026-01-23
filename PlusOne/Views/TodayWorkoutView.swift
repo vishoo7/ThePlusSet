@@ -44,7 +44,7 @@ struct TodayWorkoutView: View {
                             setsSection(title: "BBB Sets (5×10)", sets: workout.bbbSets)
 
                             // Complete workout button
-                            if workout.sets.allSatisfy({ $0.isComplete }) {
+                            if (workout.sets ?? []).allSatisfy({ $0.isComplete }) {
                                 completeWorkoutButton
                             }
                         } else {

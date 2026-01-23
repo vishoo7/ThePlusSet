@@ -4,12 +4,22 @@ import SwiftData
 @Model
 final class AppSettings {
     var barWeight: Double = 45.0
-    var availablePlates: [Double] = [45, 35, 25, 10, 5, 2.5]
+    // Store plates as comma-separated string for SwiftData compatibility
+    var availablePlatesString: String = "45,35,25,10,5,2.5"
     var bbbPercentage: Double = 0.50
     var mainSetRestSeconds: Int = 180
     var bbbSetRestSeconds: Int = 90
     var hasRequestedNotificationPermission: Bool = false
     var hasCompletedOnboarding: Bool = false
+
+    var availablePlates: [Double] {
+        get {
+            availablePlatesString.split(separator: ",").compactMap { Double($0) }
+        }
+        set {
+            availablePlatesString = newValue.map { String($0) }.joined(separator: ",")
+        }
+    }
 
     init() {}
 
@@ -21,7 +31,7 @@ final class AppSettings {
         bbbSetRestSeconds: Int = 90
     ) {
         self.barWeight = barWeight
-        self.availablePlates = availablePlates
+        self.availablePlatesString = availablePlates.map { String($0) }.joined(separator: ",")
         self.bbbPercentage = bbbPercentage
         self.mainSetRestSeconds = mainSetRestSeconds
         self.bbbSetRestSeconds = bbbSetRestSeconds
