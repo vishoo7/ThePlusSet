@@ -107,7 +107,7 @@ struct TodayWorkoutView: View {
                             onDismiss: { showTimerOverlay = false }
                         )
                         .padding()
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 90)
                     }
                     .transition(.move(edge: .bottom))
                 }
