@@ -5,8 +5,17 @@ struct TimerView: View {
     let onAddTime: (Int) -> Void
     let onStop: () -> Void
 
+    @State private var dragOffset: CGFloat = 0
+    private let dismissThreshold: CGFloat = 100
+
     var body: some View {
         VStack(spacing: 16) {
+            // Drag indicator
+            Capsule()
+                .fill(Color.gray.opacity(0.5))
+                .frame(width: 40, height: 5)
+                .padding(.top, 8)
+
             // Progress circle with time
             ZStack {
                 Circle()
@@ -79,6 +88,23 @@ struct TimerView: View {
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(radius: 10)
+        .offset(y: dragOffset)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    if value.translation.height > 0 {
+                        dragOffset = value.translation.height
+                    }
+                }
+                .onEnded { value in
+                    if value.translation.height > dismissThreshold {
+                        onStop()
+                    }
+                    withAnimation(.spring()) {
+                        dragOffset = 0
+                    }
+                }
+        )
     }
 }
 

@@ -16,9 +16,10 @@ class WorkoutViewModel: ObservableObject {
     func generateWorkout(
         for progress: CycleProgress,
         trainingMaxes: [TrainingMax],
-        settings: AppSettings
+        settings: AppSettings,
+        overrideLiftType: LiftType? = nil
     ) -> Workout {
-        let liftType = progress.currentLiftType
+        let liftType = overrideLiftType ?? progress.currentLiftType
         let week = progress.currentWeek
 
         guard let tm = trainingMaxes.first(where: { $0.liftType == liftType }) else {

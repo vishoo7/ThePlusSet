@@ -19,6 +19,8 @@ struct TodayWorkoutView: View {
     @State private var pendingNewTMs: [LiftType: Double] = [:]
     @State private var showingPRCelebration = false
     @State private var newPRLift: LiftType?
+    @State private var showingLiftPicker = false
+    @State private var selectedLiftType: LiftType?
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -157,23 +159,61 @@ struct TodayWorkoutView: View {
     }
 
     private var startWorkoutButton: some View {
-        Button {
-            createNewWorkout()
-        } label: {
-            VStack(spacing: 8) {
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .font(.system(size: 48))
-                Text("Start Today's Workout")
+        VStack(spacing: 16) {
+            // Exercise picker
+            VStack(spacing: 12) {
+                Text("Select Exercise")
                     .font(.headline)
-                Text("\(cycleProgress.currentLiftType.rawValue) - \(cycleProgress.weekDescription)")
-                    .font(.subheadline)
                     .foregroundStyle(.secondary)
+
+                HStack(spacing: 12) {
+                    ForEach(LiftType.allCases) { lift in
+                        Button {
+                            selectedLiftType = lift
+                        } label: {
+                            Text(lift.shortName)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    (selectedLiftType ?? cycleProgress.currentLiftType) == lift
+                                        ? Color.blue
+                                        : Color(.secondarySystemBackground)
+                                )
+                                .foregroundStyle(
+                                    (selectedLiftType ?? cycleProgress.currentLiftType) == lift
+                                        ? .white
+                                        : .primary
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 40)
-            .background(Color.blue)
-            .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding()
+            .background(Color(.tertiarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            // Start button
+            Button {
+                createNewWorkout()
+            } label: {
+                VStack(spacing: 8) {
+                    Image(systemName: "figure.strengthtraining.traditional")
+                        .font(.system(size: 48))
+                    Text("Start Workout")
+                        .font(.headline)
+                    Text("\((selectedLiftType ?? cycleProgress.currentLiftType).rawValue) - \(cycleProgress.weekDescription)")
+                        .font(.subheadline)
+                        .opacity(0.8)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+                .background(Color.blue)
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
         }
     }
 
@@ -300,10 +340,12 @@ struct TodayWorkoutView: View {
         let workout = workoutVM.generateWorkout(
             for: cycleProgress,
             trainingMaxes: trainingMaxes,
-            settings: settings
+            settings: settings,
+            overrideLiftType: selectedLiftType
         )
         modelContext.insert(workout)
         currentWorkout = workout
+        selectedLiftType = nil
         try? modelContext.save()
     }
 
