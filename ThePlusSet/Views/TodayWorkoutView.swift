@@ -202,6 +202,12 @@ struct TodayWorkoutView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
+    private var nextIncompleteSetId: UUID? {
+        guard let workout = currentWorkout else { return nil }
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+        return orderedSets.first(where: { !$0.isComplete })?.id
+    }
+
     private func setsSection(title: String, sets: [WorkoutSet], isWarmup: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
@@ -209,6 +215,7 @@ struct TodayWorkoutView: View {
                 .foregroundStyle(isWarmup ? .orange : .secondary)
 
             ForEach(sets, id: \.id) { set in
+                let isNextSet = set.id == nextIncompleteSetId
                 SetRowView(
                     set: set,
                     plates: PlateCalculator.platesPerSide(
@@ -217,19 +224,20 @@ struct TodayWorkoutView: View {
                         barWeight: settings.barWeight
                     ),
                     onTap: {
-                        if !set.isComplete {
+                        if !set.isComplete && isNextSet {
                             selectedSet = set
                         }
                     },
                     onQuickComplete: {
-                        if !set.isComplete {
+                        if !set.isComplete && isNextSet {
                             quickCompleteSet(set)
                         }
                     },
                     onUndo: {
                         undoSet(set)
                     },
-                    canUndo: set.id == lastCompletedSetId
+                    canUndo: set.id == lastCompletedSetId,
+                    isActive: isNextSet
                 )
             }
         }

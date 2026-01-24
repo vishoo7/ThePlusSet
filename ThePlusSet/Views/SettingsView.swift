@@ -13,7 +13,6 @@ struct SettingsView: View {
 
     @State private var showingPlateEditor = false
     @State private var showingTMEditor = false
-    @State private var showingExerciseOrderEditor = false
     @State private var isSyncing = false
     @State private var showSyncConfirmation = false
     @State private var exportText: String = ""
@@ -55,6 +54,59 @@ struct SettingsView: View {
                     .padding(.vertical, 4)
                 }
 
+                // Cycle Progress Section
+                Section("Cycle Progress") {
+                    if let progress = cycleProgressArray.first {
+                        HStack {
+                            Text("Current Cycle")
+                            Spacer()
+                            Text("Cycle \(progress.cycleNumber)")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Text("Current Week")
+                            Spacer()
+                            Text(progress.weekDescription)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Text("Workout")
+                            Spacer()
+                            Text("\(progress.currentDay + 1) of 4")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Button(role: .destructive) {
+                            showingResetCycleConfirmation = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.counterclockwise")
+                                Text("Reset Cycle")
+                            }
+                        }
+                    }
+                }
+
+                // Exercise Order Section
+                Section("Exercise Order") {
+                    ForEach(settings.exerciseOrder) { lift in
+                        HStack {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                            Text(lift.rawValue)
+                        }
+                    }
+                    .onMove { from, to in
+                        var order = settings.exerciseOrder
+                        order.move(fromOffsets: from, toOffset: to)
+                        settings.exerciseOrder = order
+                        try? modelContext.save()
+                    }
+                }
+                .environment(\.editMode, .constant(.active))
+
                 // Training Maxes Section
                 Section("Training Maxes") {
                     ForEach(LiftType.allCases) { liftType in
@@ -73,18 +125,22 @@ struct SettingsView: View {
                     }
                 }
 
-                // Exercise Order Section
-                Section("Exercise Order") {
-                    ForEach(settings.exerciseOrder) { lift in
-                        HStack {
-                            Image(systemName: "line.3.horizontal")
-                                .foregroundStyle(.secondary)
-                            Text(lift.rawValue)
+                // BBB Settings
+                Section("Boring But Big") {
+                    HStack {
+                        Text("BBB Percentage")
+                        Spacer()
+                        Picker("", selection: Binding(
+                            get: { settings.bbbPercentage },
+                            set: { settings.bbbPercentage = $0 }
+                        )) {
+                            Text("40%").tag(0.40)
+                            Text("45%").tag(0.45)
+                            Text("50%").tag(0.50)
+                            Text("55%").tag(0.55)
+                            Text("60%").tag(0.60)
                         }
-                    }
-
-                    Button("Change Order") {
-                        showingExerciseOrderEditor = true
+                        .pickerStyle(.menu)
                     }
                 }
 
@@ -136,25 +192,6 @@ struct SettingsView: View {
                         Text("Training Max = 1RM × \(Int(settings.trainingMaxPercentage * 100))%")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                    }
-                }
-
-                // BBB Settings
-                Section("Boring But Big") {
-                    HStack {
-                        Text("BBB Percentage")
-                        Spacer()
-                        Picker("", selection: Binding(
-                            get: { settings.bbbPercentage },
-                            set: { settings.bbbPercentage = $0 }
-                        )) {
-                            Text("40%").tag(0.40)
-                            Text("45%").tag(0.45)
-                            Text("50%").tag(0.50)
-                            Text("55%").tag(0.55)
-                            Text("60%").tag(0.60)
-                        }
-                        .pickerStyle(.menu)
                     }
                 }
 
@@ -259,41 +296,6 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                // Cycle Progress Section
-                Section("Cycle Progress") {
-                    if let progress = cycleProgressArray.first {
-                        HStack {
-                            Text("Current Cycle")
-                            Spacer()
-                            Text("Cycle \(progress.cycleNumber)")
-                                .foregroundStyle(.secondary)
-                        }
-
-                        HStack {
-                            Text("Current Week")
-                            Spacer()
-                            Text(progress.weekDescription)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        HStack {
-                            Text("Workout")
-                            Spacer()
-                            Text("\(progress.currentDay + 1) of 4")
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Button(role: .destructive) {
-                            showingResetCycleConfirmation = true
-                        } label: {
-                            HStack {
-                                Image(systemName: "arrow.counterclockwise")
-                                Text("Reset Cycle")
-                            }
-                        }
-                    }
-                }
-
                 // Export Section
                 Section("Data") {
                     Button {
@@ -339,9 +341,6 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showingTMEditor) {
                 TMEditorSheet(trainingMaxes: trainingMaxes)
-            }
-            .sheet(isPresented: $showingExerciseOrderEditor) {
-                ExerciseOrderSheet(settings: settings)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -782,59 +781,6 @@ struct TMEditorSheet: View {
                 for tm in trainingMaxes {
                     editedValues[tm.liftType] = tm.weight
                 }
-            }
-        }
-    }
-}
-
-// MARK: - Exercise Order Sheet
-
-struct ExerciseOrderSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    let settings: AppSettings
-
-    @State private var exerciseOrder: [LiftType] = []
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    ForEach(exerciseOrder) { lift in
-                        HStack {
-                            Image(systemName: "line.3.horizontal")
-                                .foregroundStyle(.secondary)
-                            Text(lift.rawValue)
-                        }
-                    }
-                    .onMove { from, to in
-                        exerciseOrder.move(fromOffsets: from, toOffset: to)
-                    }
-                } footer: {
-                    Text("Drag to reorder exercises. This determines the workout rotation order.")
-                }
-
-                Section {
-                    Button("Reset to Default") {
-                        exerciseOrder = [.squat, .bench, .deadlift, .overheadPress]
-                    }
-                }
-            }
-            .environment(\.editMode, .constant(.active))
-            .navigationTitle("Exercise Order")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        settings.exerciseOrder = exerciseOrder
-                        dismiss()
-                    }
-                }
-            }
-            .onAppear {
-                exerciseOrder = settings.exerciseOrder
             }
         }
     }

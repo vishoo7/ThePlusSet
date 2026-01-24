@@ -7,6 +7,7 @@ struct SetRowView: View {
     var onQuickComplete: (() -> Void)? = nil
     var onUndo: (() -> Void)? = nil
     var canUndo: Bool = false
+    var isActive: Bool = true  // Whether this set is next in sequence
 
     var body: some View {
         HStack(spacing: 0) {
@@ -46,7 +47,7 @@ struct SetRowView: View {
             .buttonStyle(.plain)
 
             // Divider between content and quick complete
-            if !set.isComplete {
+            if !set.isComplete && isActive {
                 Rectangle()
                     .fill(Color(.separator))
                     .frame(width: 1)
@@ -87,7 +88,7 @@ struct SetRowView: View {
                     }
                     .padding(.leading, 12)
                 }
-            } else {
+            } else if isActive {
                 Button {
                     onQuickComplete?()
                 } label: {
@@ -104,6 +105,12 @@ struct SetRowView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+            } else {
+                // Inactive incomplete set - show empty circle
+                Image(systemName: "circle")
+                    .font(.title2)
+                    .foregroundStyle(.tertiary)
+                    .padding(.leading, 12)
             }
         }
         .padding(.leading)
@@ -111,6 +118,7 @@ struct SetRowView: View {
         .padding(.trailing, 8)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .opacity(set.isComplete || isActive ? 1.0 : 0.7)
     }
 
     private var setTypeLabel: String {
