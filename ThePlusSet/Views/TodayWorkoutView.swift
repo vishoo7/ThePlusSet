@@ -24,6 +24,7 @@ struct TodayWorkoutView: View {
     @State private var selectedLiftType: LiftType?
     @State private var showingChangeExerciseConfirmation = false
     @State private var pendingNewLiftType: LiftType?
+    @State private var lastCompletedSetId: UUID?
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -224,7 +225,11 @@ struct TodayWorkoutView: View {
                         if !set.isComplete {
                             quickCompleteSet(set)
                         }
-                    }
+                    },
+                    onUndo: {
+                        undoSet(set)
+                    },
+                    canUndo: set.id == lastCompletedSetId
                 )
             }
         }
@@ -468,8 +473,36 @@ struct TodayWorkoutView: View {
         completeSet(set, reps: set.targetReps)
     }
 
+    private func undoSet(_ set: WorkoutSet) {
+        // Only allow undo of the last completed set
+        guard set.id == lastCompletedSetId else { return }
+
+        set.actualReps = nil
+        set.isComplete = false
+
+        // Find the previous completed set to make it undoable
+        lastCompletedSetId = findLastCompletedSet()?.id
+
+        // Stop the timer if running
+        timerVM.stop()
+        showTimerOverlay = false
+
+        try? modelContext.save()
+    }
+
+    private func findLastCompletedSet() -> WorkoutSet? {
+        guard let workout = currentWorkout else { return nil }
+
+        // Order: warmup -> main -> BBB
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+
+        // Find the last completed set
+        return orderedSets.last(where: { $0.isComplete })
+    }
+
     private func completeSet(_ set: WorkoutSet, reps: Int) {
         set.complete(reps: reps)
+        lastCompletedSetId = set.id
         try? modelContext.save()
 
         // Start rest timer based on set type
@@ -492,6 +525,20 @@ struct TodayWorkoutView: View {
             )
         } ?? []
 
+        // Determine next set type
+        let nextSetType: String
+        if let next = nextSet {
+            if next.isWarmup {
+                nextSetType = "Warmup"
+            } else if next.isBBB {
+                nextSetType = "BBB"
+            } else {
+                nextSetType = "Working"
+            }
+        } else {
+            nextSetType = ""
+        }
+
         // Set the chime sound from settings
         NotificationManager.shared.chimeSoundID = SystemSoundID(settings.timerChimeSoundID)
         timerVM.start(
@@ -499,7 +546,8 @@ struct TodayWorkoutView: View {
             nextSetWeight: nextSet?.targetWeight,
             nextSetReps: nextSet?.targetReps,
             nextSetPlates: nextSetPlates,
-            nextSetIsAMRAP: nextSet?.isAMRAP ?? false
+            nextSetIsAMRAP: nextSet?.isAMRAP ?? false,
+            nextSetType: nextSetType
         )
         showTimerOverlay = true
 

@@ -5,6 +5,8 @@ struct SetRowView: View {
     let plates: [Double]
     let onTap: () -> Void
     var onQuickComplete: (() -> Void)? = nil
+    var onUndo: (() -> Void)? = nil
+    var canUndo: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -53,18 +55,38 @@ struct SetRowView: View {
 
             // Completion status / Quick complete button
             if set.isComplete {
-                VStack(alignment: .trailing) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(.green)
+                if canUndo {
+                    Button {
+                        onUndo?()
+                    } label: {
+                        VStack(alignment: .trailing) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(.green)
 
-                    if let actualReps = set.actualReps {
-                        Text("\(actualReps) reps")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            if let actualReps = set.actualReps {
+                                Text("\(actualReps) reps")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
+                    .buttonStyle(.plain)
+                    .padding(.leading, 12)
+                } else {
+                    VStack(alignment: .trailing) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.green)
+
+                        if let actualReps = set.actualReps {
+                            Text("\(actualReps) reps")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.leading, 12)
                 }
-                .padding(.leading, 12)
             } else {
                 Button {
                     onQuickComplete?()

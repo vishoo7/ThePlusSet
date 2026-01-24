@@ -12,6 +12,7 @@ class TimerViewModel: ObservableObject {
     @Published var nextSetReps: Int?
     @Published var nextSetPlates: [Double] = []
     @Published var nextSetIsAMRAP: Bool = false
+    @Published var nextSetType: String = ""  // "Warmup", "Working", "BBB"
 
     private var timer: Timer?
     private let notificationManager = NotificationManager.shared
@@ -28,10 +29,10 @@ class TimerViewModel: ObservableObject {
     }
 
     func start(seconds: Int) {
-        start(seconds: seconds, nextSetWeight: nil, nextSetReps: nil, nextSetPlates: [], nextSetIsAMRAP: false)
+        start(seconds: seconds, nextSetWeight: nil, nextSetReps: nil, nextSetPlates: [], nextSetIsAMRAP: false, nextSetType: "")
     }
 
-    func start(seconds: Int, nextSetWeight: Double?, nextSetReps: Int?, nextSetPlates: [Double], nextSetIsAMRAP: Bool) {
+    func start(seconds: Int, nextSetWeight: Double?, nextSetReps: Int?, nextSetPlates: [Double], nextSetIsAMRAP: Bool, nextSetType: String = "") {
         stop()
         totalSeconds = seconds
         remainingSeconds = seconds
@@ -42,6 +43,7 @@ class TimerViewModel: ObservableObject {
         self.nextSetReps = nextSetReps
         self.nextSetPlates = nextSetPlates
         self.nextSetIsAMRAP = nextSetIsAMRAP
+        self.nextSetType = nextSetType
 
         notificationManager.scheduleRestTimerNotification(seconds: seconds)
 
@@ -62,6 +64,7 @@ class TimerViewModel: ObservableObject {
         nextSetReps = nil
         nextSetPlates = []
         nextSetIsAMRAP = false
+        nextSetType = ""
         notificationManager.cancelRestTimerNotification()
     }
 

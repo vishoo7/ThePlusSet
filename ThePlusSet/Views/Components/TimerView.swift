@@ -20,10 +20,23 @@ struct TimerView: View {
             // Next set info
             if let weight = timerVM.nextSetWeight, let reps = timerVM.nextSetReps {
                 VStack(spacing: 6) {
-                    Text("Next Set")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 8) {
+                        Text("Next Set")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.secondary)
+
+                        if !timerVM.nextSetType.isEmpty {
+                            Text(timerVM.nextSetType)
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(setTypeColor)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(setTypeColor.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                    }
 
                     HStack(spacing: 8) {
                         Text("\(PlateCalculator.formatWeight(weight)) lbs")
@@ -153,6 +166,17 @@ struct TimerView: View {
                     }
                 }
         )
+    }
+
+    private var setTypeColor: Color {
+        switch timerVM.nextSetType {
+        case "Warmup":
+            return .yellow
+        case "BBB":
+            return .blue
+        default:
+            return .primary
+        }
     }
 }
 
