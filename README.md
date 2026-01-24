@@ -6,8 +6,9 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### Setup & Settings
 - Configure 4 main lifts (Squat, Bench Press, Deadlift, Overhead Press) with starting training maxes
+- Customizable exercise order (drag to reorder in settings)
 - Specify available plates (default: 45, 35, 25, 10, 5, 2.5 lbs) and bar weight (default: 45 lbs)
-- Configurable Training Max percentage (85-95% of 1RM, default 90%)
+- Configurable Training Max percentage (80-100% of 1RM, default 90%)
 - Configurable BBB percentage (default: 50%)
 - Adjustable rest timer durations for warmup, working sets, and BBB
 - View and edit training maxes anytime
@@ -28,8 +29,13 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Tap a set to mark complete and enter actual reps performed
 - AMRAP sets (the + sets) prominently prompt for rep count
 - Automatic rest timer starts after logging any set
-- Timer shows countdown with visual progress ring
+- Timer shows countdown with visual progress ring (pull down to dismiss)
 - Timer completion triggers sound, vibration, and local notification (works when backgrounded)
+
+### Workout Flexibility
+- Choose which exercise to start when beginning a workout
+- Change exercise mid-workout (only exercises not yet done this week are available)
+- Exercises already completed this week are automatically excluded from selection
 
 ### Progression
 - After completing week 3, calculates estimated 1RM using Epley formula: `weight × (1 + reps/30)`
@@ -40,6 +46,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 ### History & PRs
 - Calendar view with red dots on days with logged workouts
 - Tap any date to see full workout details (lift, sets, weights, reps performed)
+- Delete workouts from history (with confirmation)
 - Tracks PRs on AMRAP sets based on estimated 1RM
 - Highlights when a new PR is hit with celebration animation
 
