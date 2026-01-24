@@ -7,8 +7,9 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 ### Setup & Settings
 - Configure 4 main lifts (Squat, Bench Press, Deadlift, Overhead Press) with starting training maxes
 - Specify available plates (default: 45, 35, 25, 10, 5, 2.5 lbs) and bar weight (default: 45 lbs)
+- Configurable Training Max percentage (85-95% of 1RM, default 90%)
 - Configurable BBB percentage (default: 50%)
-- Adjustable rest timer durations (default: 3 min for main sets, 90 sec for BBB)
+- Adjustable rest timer durations for warmup, working sets, and BBB
 - View and edit training maxes anytime
 - Manual "Sync Now" button for iCloud sync
 
@@ -17,8 +18,10 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
   - Week 1: 5/5/5+ (65%, 75%, 85%)
   - Week 2: 3/3/3+ (70%, 80%, 90%)
   - Week 3: 5/3/1+ (75%, 85%, 95%)
-  - Week 4: Deload (5×40%, 5×50%, 5×60%)
-- Each workout shows 3 main working sets plus 5 BBB sets (5×10)
+  - Week 4: Deload (40%, 50%, 60% — no warmup or BBB)
+- **Warmup sets:** 40% × 5, 50% × 5, 60% × 3 (skipped on deload week)
+- **Working sets:** 3 main sets per the weekly percentages
+- **BBB sets:** 5 × 10 at configured percentage (skipped on deload week)
 
 ### Set Display & Logging
 - Each set displays: target weight, target reps, and plate breakdown per side
@@ -70,6 +73,7 @@ PlusOne/
     │   ├── CalendarView.swift        # Monthly history view
     │   ├── SettingsView.swift        # All configuration options
     │   ├── OnboardingView.swift      # First-launch setup flow
+    │   ├── AboutView.swift           # Philosophy and donation info
     │   └── Components/
     │       ├── SetRowView.swift      # Tappable set row with weight/reps/plates
     │       ├── PlateLoadingView.swift # Plate breakdown display
@@ -148,6 +152,16 @@ The app uses CloudKit for syncing data across devices. To enable:
 ### Formulas
 - **Epley Formula (Estimated 1RM):** `weight × (1 + reps / 30)`
 - **New Training Max:** `estimated1RM × 0.90`
+
+## Contributing
+
+Found a bug? Have a feature idea? Contributions are welcome! Please open an issue or submit a pull request.
+
+## Support Development
+
+Donations big or small are appreciated and help provide more resources for maintaining and improving the app.
+
+**Bitcoin:** `bc1ql99gmvxv8ceza3wdy8z6m4hzt8scj4jadu900z`
 
 ## License
 

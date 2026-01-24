@@ -10,6 +10,7 @@ final class WorkoutSet {
     var actualReps: Int? = nil
     var isAMRAP: Bool = false
     var isBBB: Bool = false
+    var isWarmup: Bool = false
     var isComplete: Bool = false
     var completedAt: Date? = nil
     var workout: Workout? = nil
@@ -19,13 +20,15 @@ final class WorkoutSet {
         targetWeight: Double,
         targetReps: Int,
         isAMRAP: Bool = false,
-        isBBB: Bool = false
+        isBBB: Bool = false,
+        isWarmup: Bool = false
     ) {
         self.setNumber = setNumber
         self.targetWeight = targetWeight
         self.targetReps = targetReps
         self.isAMRAP = isAMRAP
         self.isBBB = isBBB
+        self.isWarmup = isWarmup
     }
 
     func complete(reps: Int) {

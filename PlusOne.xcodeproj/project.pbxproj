@@ -32,6 +32,7 @@
 		A10000000000000000000023 /* RepInputSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* RepInputSheet.swift */; };
 		A10000000000000000000024 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* CalendarDayView.swift */; };
 		A10000000000000000000025 /* PRBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* PRBadgeView.swift */; };
+		A10000000000000000000026 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* AboutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		A20000000000000000000025 /* PRBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRBadgeView.swift; sourceTree = "<group>"; };
 		A20000000000000000000026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000027 /* PlusOne.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PlusOne.entitlements; sourceTree = "<group>"; };
+		A20000000000000000000028 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* PlusOne.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlusOne.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -129,6 +131,7 @@
 				A20000000000000000000017 /* CalendarView.swift */,
 				A20000000000000000000018 /* SettingsView.swift */,
 				A20000000000000000000019 /* OnboardingView.swift */,
+				A20000000000000000000028 /* AboutView.swift */,
 				A50000000000000000000009 /* Components */,
 			);
 			path = Views;
@@ -267,6 +270,7 @@
 				A10000000000000000000023 /* RepInputSheet.swift in Sources */,
 				A10000000000000000000024 /* CalendarDayView.swift in Sources */,
 				A10000000000000000000025 /* PRBadgeView.swift in Sources */,
+				A10000000000000000000026 /* AboutView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

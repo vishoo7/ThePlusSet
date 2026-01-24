@@ -31,6 +31,31 @@ class WorkoutViewModel: ObservableObject {
             weekNumber: week
         )
 
+        var setIndex = 0
+
+        // Generate warmup sets (skip on deload week)
+        if week != 4 {
+            let warmupSets = WendlerCalculator.calculateWarmupSets(
+                trainingMax: tm.weight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+
+            for set in warmupSets {
+                let workoutSet = WorkoutSet(
+                    setNumber: setIndex,
+                    targetWeight: set.weight,
+                    targetReps: set.reps,
+                    isAMRAP: false,
+                    isBBB: false,
+                    isWarmup: true
+                )
+                workoutSet.workout = workout
+                workout.addSet(workoutSet)
+                setIndex += 1
+            }
+        }
+
         // Generate main sets
         let mainSets = WendlerCalculator.calculateMainSets(
             trainingMax: tm.weight,
@@ -39,16 +64,18 @@ class WorkoutViewModel: ObservableObject {
             barWeight: settings.barWeight
         )
 
-        for (index, set) in mainSets.enumerated() {
+        for set in mainSets {
             let workoutSet = WorkoutSet(
-                setNumber: index,
+                setNumber: setIndex,
                 targetWeight: set.weight,
                 targetReps: set.reps,
                 isAMRAP: set.isAMRAP,
-                isBBB: false
+                isBBB: false,
+                isWarmup: false
             )
             workoutSet.workout = workout
             workout.addSet(workoutSet)
+            setIndex += 1
         }
 
         // Generate BBB sets (skip on deload week)
@@ -60,16 +87,18 @@ class WorkoutViewModel: ObservableObject {
                 barWeight: settings.barWeight
             )
 
-            for (index, set) in bbbSets.enumerated() {
+            for set in bbbSets {
                 let workoutSet = WorkoutSet(
-                    setNumber: mainSets.count + index,
+                    setNumber: setIndex,
                     targetWeight: set.weight,
                     targetReps: set.reps,
                     isAMRAP: false,
-                    isBBB: true
+                    isBBB: true,
+                    isWarmup: false
                 )
                 workoutSet.workout = workout
                 workout.addSet(workoutSet)
+                setIndex += 1
             }
         }
 

@@ -64,17 +64,21 @@ struct SetRowView: View {
     }
 
     private var setTypeLabel: String {
-        if set.isBBB {
+        if set.isWarmup {
+            return "Warmup"
+        } else if set.isBBB {
             return "BBB"
         } else if set.isAMRAP {
             return "AMRAP"
         } else {
-            return "Main"
+            return "Work"
         }
     }
 
     private var setTypeColor: Color {
-        if set.isAMRAP {
+        if set.isWarmup {
+            return .yellow
+        } else if set.isAMRAP {
             return .orange
         } else if set.isBBB {
             return .blue

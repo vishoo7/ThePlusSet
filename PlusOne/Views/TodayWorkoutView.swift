@@ -37,8 +37,13 @@ struct TodayWorkoutView: View {
                         cycleHeader
 
                         if let workout = currentWorkout {
+                            // Warmup sets section (hidden on deload week)
+                            if !workout.warmupSets.isEmpty {
+                                setsSection(title: "Warmup", sets: workout.warmupSets, isWarmup: true)
+                            }
+
                             // Main sets section
-                            setsSection(title: "Main Sets", sets: workout.mainSets)
+                            setsSection(title: "Working Sets", sets: workout.mainSets)
 
                             // BBB sets section (hidden on deload week)
                             if !workout.bbbSets.isEmpty {
@@ -126,11 +131,11 @@ struct TodayWorkoutView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    private func setsSection(title: String, sets: [WorkoutSet]) -> some View {
+    private func setsSection(title: String, sets: [WorkoutSet], isWarmup: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(isWarmup ? .orange : .secondary)
 
             ForEach(sets, id: \.id) { set in
                 SetRowView(
@@ -306,8 +311,15 @@ struct TodayWorkoutView: View {
         set.complete(reps: reps)
         try? modelContext.save()
 
-        // Start rest timer
-        let restTime = set.isBBB ? settings.bbbSetRestSeconds : settings.mainSetRestSeconds
+        // Start rest timer based on set type
+        let restTime: Int
+        if set.isWarmup {
+            restTime = settings.warmupRestSeconds
+        } else if set.isBBB {
+            restTime = settings.bbbSetRestSeconds
+        } else {
+            restTime = settings.mainSetRestSeconds
+        }
         timerVM.start(seconds: restTime)
 
         // Check for PR on AMRAP sets

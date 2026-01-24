@@ -31,8 +31,12 @@ final class Workout {
         (sets ?? []).sorted { $0.setNumber < $1.setNumber }
     }
 
+    var warmupSets: [WorkoutSet] {
+        sortedSets.filter { $0.isWarmup }
+    }
+
     var mainSets: [WorkoutSet] {
-        sortedSets.filter { !$0.isBBB }
+        sortedSets.filter { !$0.isBBB && !$0.isWarmup }
     }
 
     var bbbSets: [WorkoutSet] {

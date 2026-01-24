@@ -7,8 +7,10 @@ final class AppSettings {
     // Store plates as comma-separated string for SwiftData compatibility
     var availablePlatesString: String = "45,35,25,10,5,2.5"
     var bbbPercentage: Double = 0.50
+    var trainingMaxPercentage: Double = 0.90  // TM = 1RM × this percentage
     var mainSetRestSeconds: Int = 180
     var bbbSetRestSeconds: Int = 90
+    var warmupRestSeconds: Int = 60
     var hasRequestedNotificationPermission: Bool = false
     var hasCompletedOnboarding: Bool = false
 
@@ -27,13 +29,17 @@ final class AppSettings {
         barWeight: Double = 45.0,
         availablePlates: [Double] = [45, 35, 25, 10, 5, 2.5],
         bbbPercentage: Double = 0.50,
+        trainingMaxPercentage: Double = 0.90,
         mainSetRestSeconds: Int = 180,
-        bbbSetRestSeconds: Int = 90
+        bbbSetRestSeconds: Int = 90,
+        warmupRestSeconds: Int = 60
     ) {
         self.barWeight = barWeight
         self.availablePlatesString = availablePlates.map { String($0) }.joined(separator: ",")
         self.bbbPercentage = bbbPercentage
+        self.trainingMaxPercentage = trainingMaxPercentage
         self.mainSetRestSeconds = mainSetRestSeconds
         self.bbbSetRestSeconds = bbbSetRestSeconds
+        self.warmupRestSeconds = warmupRestSeconds
     }
 }

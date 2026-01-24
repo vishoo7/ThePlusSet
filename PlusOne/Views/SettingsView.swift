@@ -8,6 +8,8 @@ struct SettingsView: View {
 
     @State private var showingPlateEditor = false
     @State private var showingTMEditor = false
+    @State private var isSyncing = false
+    @State private var showSyncConfirmation = false
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -61,6 +63,29 @@ struct SettingsView: View {
                     }
                 }
 
+                // Training Max Settings
+                Section("Training Max") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("TM Percentage")
+                            Spacer()
+                            Text("\(Int(settings.trainingMaxPercentage * 100))%")
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(
+                            value: Binding(
+                                get: { settings.trainingMaxPercentage },
+                                set: { settings.trainingMaxPercentage = $0 }
+                            ),
+                            in: 0.85...0.95,
+                            step: 0.05
+                        )
+                        Text("Training Max = 1RM × \(Int(settings.trainingMaxPercentage * 100))%")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 // BBB Settings
                 Section("Boring But Big") {
                     HStack {
@@ -84,7 +109,25 @@ struct SettingsView: View {
                 Section("Rest Timer") {
                     NavigationLink {
                         TimerSettingsView(
-                            title: "Main Sets Rest",
+                            title: "Warmup Rest",
+                            seconds: Binding(
+                                get: { settings.warmupRestSeconds },
+                                set: { settings.warmupRestSeconds = $0 }
+                            ),
+                            presets: [30, 45, 60, 90]
+                        )
+                    } label: {
+                        HStack {
+                            Text("Warmup Sets")
+                            Spacer()
+                            Text(formatTime(settings.warmupRestSeconds))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    NavigationLink {
+                        TimerSettingsView(
+                            title: "Working Sets Rest",
                             seconds: Binding(
                                 get: { settings.mainSetRestSeconds },
                                 set: { settings.mainSetRestSeconds = $0 }
@@ -93,7 +136,7 @@ struct SettingsView: View {
                         )
                     } label: {
                         HStack {
-                            Text("Main Sets")
+                            Text("Working Sets")
                             Spacer()
                             Text(formatTime(settings.mainSetRestSeconds))
                                 .foregroundStyle(.secondary)
@@ -127,9 +170,17 @@ struct SettingsView: View {
                         HStack {
                             Text("Sync Now")
                             Spacer()
-                            Image(systemName: "arrow.triangle.2.circlepath")
+                            if isSyncing {
+                                ProgressView()
+                            } else if showSyncConfirmation {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.green)
+                            } else {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            }
                         }
                     }
+                    .disabled(isSyncing)
 
                     Text("Data automatically syncs with iCloud")
                         .font(.caption)
@@ -138,6 +189,12 @@ struct SettingsView: View {
 
                 // About Section
                 Section("About") {
+                    NavigationLink {
+                        AboutView()
+                    } label: {
+                        Text("About Plus One")
+                    }
+
                     HStack {
                         Text("Version")
                         Spacer()
@@ -157,8 +214,22 @@ struct SettingsView: View {
     }
 
     private func syncNow() {
+        isSyncing = true
+        showSyncConfirmation = false
+
         // Trigger save to force CloudKit sync
         try? modelContext.save()
+
+        // Simulate sync delay for feedback
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            isSyncing = false
+            showSyncConfirmation = true
+
+            // Hide confirmation after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                showSyncConfirmation = false
+            }
+        }
     }
 
     private func formatTime(_ seconds: Int) -> String {

@@ -59,6 +59,26 @@ struct WendlerCalculator {
         }
     }
 
+    static func calculateWarmupSets(
+        trainingMax: Double,
+        availablePlates: [Double],
+        barWeight: Double
+    ) -> [(weight: Double, reps: Int)] {
+        // Warmup: 40% x 5, 50% x 5, 60% x 3
+        let warmupPercentages: [Double] = [0.40, 0.50, 0.60]
+        let warmupReps: [Int] = [5, 5, 3]
+
+        return zip(warmupPercentages, warmupReps).map { percentage, reps in
+            let rawWeight = trainingMax * percentage
+            let roundedWeight = PlateCalculator.roundToNearestLoadable(
+                weight: rawWeight,
+                availablePlates: availablePlates,
+                barWeight: barWeight
+            )
+            return (roundedWeight, reps)
+        }
+    }
+
     static func calculateBBBSets(
         trainingMax: Double,
         bbbPercentage: Double,
@@ -82,8 +102,8 @@ struct WendlerCalculator {
         return weight * (1 + Double(reps) / 30.0)
     }
 
-    // Calculate new training max (90% of estimated 1RM)
-    static func newTrainingMax(from estimated1RM: Double) -> Double {
-        return estimated1RM * 0.90
+    // Calculate new training max from estimated 1RM
+    static func newTrainingMax(from estimated1RM: Double, tmPercentage: Double = 0.90) -> Double {
+        return estimated1RM * tmPercentage
     }
 }
