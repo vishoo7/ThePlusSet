@@ -20,6 +20,8 @@ struct TodayWorkoutView: View {
     @State private var newPRLift: LiftType?
     @State private var showingLiftPicker = false
     @State private var selectedLiftType: LiftType?
+    @State private var showingChangeExerciseConfirmation = false
+    @State private var pendingNewLiftType: LiftType?
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -27,6 +29,29 @@ struct TodayWorkoutView: View {
 
     private var cycleProgress: CycleProgress {
         cycleProgressArray.first ?? CycleProgress()
+    }
+
+    // Get exercises already completed this week (same cycle and week number)
+    private var exercisesCompletedThisWeek: Set<LiftType> {
+        let currentCycle = cycleProgress.cycleNumber
+        let currentWeek = cycleProgress.currentWeek
+
+        let completedThisWeek = allWorkouts.filter { workout in
+            workout.isComplete &&
+            workout.cycleNumber == currentCycle &&
+            workout.weekNumber == currentWeek
+        }
+
+        return Set(completedThisWeek.map { $0.liftType })
+    }
+
+    // Exercises available to switch to (not done this week, excluding current)
+    private var availableExercisesForChange: [LiftType] {
+        guard let current = currentWorkout else { return [] }
+        let completed = exercisesCompletedThisWeek
+        return settings.exerciseOrder.filter { lift in
+            lift != current.liftType && !completed.contains(lift)
+        }
     }
 
     var body: some View {
@@ -98,6 +123,20 @@ struct TodayWorkoutView: View {
             .sheet(isPresented: $showingNewCycleSheet) {
                 newCycleSheet
             }
+            .alert("Change Exercise?", isPresented: $showingChangeExerciseConfirmation) {
+                Button("Cancel", role: .cancel) {
+                    pendingNewLiftType = nil
+                }
+                Button("Change") {
+                    if let newLift = pendingNewLiftType {
+                        changeExercise(to: newLift)
+                    }
+                }
+            } message: {
+                if let newLift = pendingNewLiftType {
+                    Text("This will discard your current workout progress and start a new \(newLift.rawValue) workout.")
+                }
+            }
             .onAppear {
                 workoutVM.setModelContext(modelContext)
                 loadOrCreateWorkout()
@@ -117,9 +156,28 @@ struct TodayWorkoutView: View {
                 .font(.headline)
 
             if let workout = currentWorkout {
-                Text(workout.liftType.rawValue)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                HStack(spacing: 8) {
+                    Text(workout.liftType.rawValue)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+
+                    if !availableExercisesForChange.isEmpty {
+                        Menu {
+                            ForEach(availableExercisesForChange) { lift in
+                                Button {
+                                    pendingNewLiftType = lift
+                                    showingChangeExerciseConfirmation = true
+                                } label: {
+                                    Label(lift.rawValue, systemImage: "figure.strengthtraining.traditional")
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.title3)
+                                .foregroundStyle(.blue)
+                        }
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity)
@@ -153,7 +211,21 @@ struct TodayWorkoutView: View {
     }
 
     private var suggestedLiftType: LiftType {
-        cycleProgress.liftType(for: settings)
+        // Get the next exercise in order that hasn't been done this week
+        let completed = exercisesCompletedThisWeek
+        for lift in settings.exerciseOrder {
+            if !completed.contains(lift) {
+                return lift
+            }
+        }
+        // Fallback to cycle progress default
+        return cycleProgress.liftType(for: settings)
+    }
+
+    // Exercises available to start (not done this week)
+    private var availableExercisesToStart: [LiftType] {
+        let completed = exercisesCompletedThisWeek
+        return settings.exerciseOrder.filter { !completed.contains($0) }
     }
 
     private var startWorkoutButton: some View {
@@ -165,7 +237,7 @@ struct TodayWorkoutView: View {
                     .foregroundStyle(.secondary)
 
                 HStack(spacing: 12) {
-                    ForEach(settings.exerciseOrder) { lift in
+                    ForEach(availableExercisesToStart) { lift in
                         Button {
                             selectedLiftType = lift
                         } label: {
@@ -344,6 +416,30 @@ struct TodayWorkoutView: View {
         modelContext.insert(workout)
         currentWorkout = workout
         selectedLiftType = nil
+        try? modelContext.save()
+    }
+
+    private func changeExercise(to newLiftType: LiftType) {
+        // Delete the current incomplete workout
+        if let workout = currentWorkout {
+            if let sets = workout.sets {
+                for set in sets {
+                    modelContext.delete(set)
+                }
+            }
+            modelContext.delete(workout)
+        }
+
+        // Create new workout with the selected exercise
+        let newWorkout = workoutVM.generateWorkout(
+            for: cycleProgress,
+            trainingMaxes: trainingMaxes,
+            settings: settings,
+            overrideLiftType: newLiftType
+        )
+        modelContext.insert(newWorkout)
+        currentWorkout = newWorkout
+        pendingNewLiftType = nil
         try? modelContext.save()
     }
 
