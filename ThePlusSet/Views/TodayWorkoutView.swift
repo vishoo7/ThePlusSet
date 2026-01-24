@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AudioToolbox
 
 struct TodayWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
@@ -9,10 +10,11 @@ struct TodayWorkoutView: View {
     @Query(sort: \Workout.date, order: .reverse) private var allWorkouts: [Workout]
     @Query private var personalRecords: [PersonalRecord]
 
-    @StateObject private var timerVM = TimerViewModel()
+    @EnvironmentObject var timerVM: TimerViewModel
     @StateObject private var workoutVM = WorkoutViewModel()
 
     @State private var currentWorkout: Workout?
+    @State private var showTimerOverlay = false
     @State private var selectedSet: WorkoutSet?
     @State private var showingNewCycleSheet = false
     @State private var pendingNewTMs: [LiftType: Double] = [:]
@@ -88,13 +90,14 @@ struct TodayWorkoutView: View {
                 }
 
                 // Timer overlay
-                if timerVM.isRunning {
+                if timerVM.isRunning && showTimerOverlay {
                     VStack {
                         Spacer()
                         TimerView(
                             timerVM: timerVM,
                             onAddTime: { timerVM.addTime(seconds: $0) },
-                            onStop: { timerVM.stop() }
+                            onStop: { timerVM.stop(); showTimerOverlay = false },
+                            onDismiss: { showTimerOverlay = false }
                         )
                         .padding()
                     }
@@ -456,7 +459,10 @@ struct TodayWorkoutView: View {
         } else {
             restTime = settings.mainSetRestSeconds
         }
+        // Set the chime sound from settings
+        NotificationManager.shared.chimeSoundID = SystemSoundID(settings.timerChimeSoundID)
         timerVM.start(seconds: restTime)
+        showTimerOverlay = true
 
         // Check for PR on AMRAP sets
         if set.isAMRAP, let workout = currentWorkout {
@@ -507,6 +513,7 @@ struct TodayWorkoutView: View {
         // Reset state
         currentWorkout = nil
         timerVM.stop()
+        showTimerOverlay = false
     }
 
     private func calculateNewTMs(for workout: Workout) {
@@ -546,6 +553,7 @@ struct TodayWorkoutView: View {
 
 #Preview {
     TodayWorkoutView()
+        .environmentObject(TimerViewModel())
         .modelContainer(for: [
             AppSettings.self,
             TrainingMax.self,

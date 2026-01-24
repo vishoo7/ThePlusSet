@@ -59,8 +59,10 @@ class NotificationManager: ObservableObject {
         )
     }
 
+    var chimeSoundID: SystemSoundID = 1016
+
     func playCompletionSound() {
-        AudioServicesPlaySystemSound(1007) // Standard notification sound
+        AudioServicesPlaySystemSound(chimeSoundID)
     }
 
     func vibrate() {
@@ -70,5 +72,9 @@ class NotificationManager: ObservableObject {
     func triggerTimerCompletion() {
         playCompletionSound()
         vibrate()
+    }
+
+    func previewSound(_ soundID: SystemSoundID) {
+        AudioServicesPlaySystemSound(soundID)
     }
 }

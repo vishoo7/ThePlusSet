@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import AudioToolbox
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -182,6 +183,25 @@ struct SettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+
+                    NavigationLink {
+                        ChimeSoundPickerView(
+                            selectedSoundID: Binding(
+                                get: { settings.timerChimeSoundID },
+                                set: {
+                                    settings.timerChimeSoundID = $0
+                                    NotificationManager.shared.chimeSoundID = SystemSoundID($0)
+                                }
+                            )
+                        )
+                    } label: {
+                        HStack {
+                            Text("Timer Chime")
+                            Spacer()
+                            Text(chimeSoundName(for: settings.timerChimeSoundID))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
 
                 // Sync Section
@@ -287,6 +307,20 @@ struct SettingsView: View {
             return "\(mins) min"
         } else {
             return "\(mins):\(String(format: "%02d", secs))"
+        }
+    }
+
+    private func chimeSoundName(for soundID: Int) -> String {
+        switch soundID {
+        case 1016: return "Tri-tone"
+        case 1007: return "Chime"
+        case 1005: return "Alarm"
+        case 1013: return "Note"
+        case 1014: return "Synth"
+        case 1315: return "Bell"
+        case 1304: return "Fanfare"
+        case 1057: return "Tink"
+        default: return "Default"
         }
     }
 
@@ -688,6 +722,50 @@ struct ExerciseOrderSheet: View {
                 exerciseOrder = settings.exerciseOrder
             }
         }
+    }
+}
+
+// MARK: - Chime Sound Picker View
+
+struct ChimeSoundPickerView: View {
+    @Binding var selectedSoundID: Int
+
+    private let sounds: [(id: Int, name: String)] = [
+        (1016, "Tri-tone"),
+        (1007, "Chime"),
+        (1005, "Alarm"),
+        (1013, "Note"),
+        (1014, "Synth"),
+        (1315, "Bell"),
+        (1304, "Fanfare"),
+        (1057, "Tink")
+    ]
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(sounds, id: \.id) { sound in
+                    Button {
+                        selectedSoundID = sound.id
+                        NotificationManager.shared.previewSound(SystemSoundID(sound.id))
+                    } label: {
+                        HStack {
+                            Text(sound.name)
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if selectedSoundID == sound.id {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                }
+            } footer: {
+                Text("Tap a sound to preview and select it")
+            }
+        }
+        .navigationTitle("Timer Chime")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -4,6 +4,7 @@ struct TimerView: View {
     @ObservedObject var timerVM: TimerViewModel
     let onAddTime: (Int) -> Void
     let onStop: () -> Void
+    var onDismiss: (() -> Void)? = nil
 
     @State private var dragOffset: CGFloat = 0
     private let dismissThreshold: CGFloat = 100
@@ -45,19 +46,19 @@ struct TimerView: View {
             // Time adjustment controls
             HStack(spacing: 12) {
                 Button {
-                    onAddTime(-30)
+                    onAddTime(-15)
                 } label: {
-                    Text("-30s")
+                    Text("-15s")
                         .font(.subheadline)
                         .frame(width: 50)
                 }
                 .buttonStyle(.bordered)
-                .disabled(timerVM.remainingSeconds <= 30)
+                .disabled(timerVM.remainingSeconds <= 15)
 
                 Button {
-                    onAddTime(30)
+                    onAddTime(15)
                 } label: {
-                    Text("+30s")
+                    Text("+15s")
                         .font(.subheadline)
                         .frame(width: 50)
                 }
@@ -98,7 +99,12 @@ struct TimerView: View {
                 }
                 .onEnded { value in
                     if value.translation.height > dismissThreshold {
-                        onStop()
+                        // Call onDismiss to hide the overlay while keeping the timer running
+                        if let dismiss = onDismiss {
+                            dismiss()
+                        } else {
+                            onStop()
+                        }
                     }
                     withAnimation(.spring()) {
                         dragOffset = 0

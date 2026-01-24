@@ -43,11 +43,18 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
+    @StateObject private var timerVM = TimerViewModel()
+
     var body: some View {
         TabView {
             TodayWorkoutView()
                 .tabItem {
                     Label("Today", systemImage: "figure.strengthtraining.traditional")
+                }
+
+            TimerTabView()
+                .tabItem {
+                    Label("Timer", systemImage: "timer")
                 }
 
             CalendarView()
@@ -60,6 +67,7 @@ struct MainTabView: View {
                     Label("Settings", systemImage: "gearshape")
                 }
         }
+        .environmentObject(timerVM)
     }
 }
 
