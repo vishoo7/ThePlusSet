@@ -22,9 +22,10 @@ struct CalendarView: View {
         Set(allWorkouts.filter { $0.isComplete }.map { calendar.startOfDay(for: $0.date) })
     }
 
-    private var selectedWorkout: Workout? {
+    private var selectedDayWorkouts: [Workout] {
         let selectedDay = calendar.startOfDay(for: selectedDate)
-        return allWorkouts.first { calendar.isDate($0.date, inSameDayAs: selectedDay) && $0.isComplete }
+        return allWorkouts.filter { calendar.isDate($0.date, inSameDayAs: selectedDay) && $0.isComplete }
+            .sorted { $0.date < $1.date }
     }
 
     var body: some View {
@@ -38,8 +39,10 @@ struct CalendarView: View {
                     calendarGrid
 
                     // Selected workout details
-                    if let workout = selectedWorkout {
-                        workoutDetails(workout)
+                    if !selectedDayWorkouts.isEmpty {
+                        ForEach(selectedDayWorkouts, id: \.id) { workout in
+                            workoutDetails(workout)
+                        }
                     } else if calendar.isDate(selectedDate, inSameDayAs: Date()) {
                         noWorkoutToday
                     }

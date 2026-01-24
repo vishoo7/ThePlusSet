@@ -517,7 +517,8 @@ struct SettingsView: View {
 
         // Workout History
         text += "\n## Workout History\n"
-        text += "Total Workouts: \(allWorkouts.filter { $0.isComplete }.count)\n\n"
+        text += "Total Completed Workouts: \(allWorkouts.filter { $0.isComplete }.count)\n"
+        text += "Total Workouts (including incomplete): \(allWorkouts.count)\n\n"
 
         let completedWorkouts = allWorkouts.filter { $0.isComplete }.sorted { $0.date > $1.date }
 
@@ -890,7 +891,12 @@ struct ShareSheet: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let textData = text.data(using: .utf8)!
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("ThePlusSet_Export.txt")
+        let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .replacingOccurrences(of: " ", with: "_")
+            .replacingOccurrences(of: ",", with: "")
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("ThePlusSet_Export_\(timestamp).md")
         try? textData.write(to: tempURL)
 
         let activityViewController = UIActivityViewController(
