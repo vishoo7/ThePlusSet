@@ -9,6 +9,8 @@ struct CalendarView: View {
 
     @State private var selectedDate: Date = Date()
     @State private var displayedMonth: Date = Date()
+    @State private var showingDeleteConfirmation = false
+    @State private var workoutToDelete: Workout?
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -45,7 +47,42 @@ struct CalendarView: View {
                 .padding()
             }
             .navigationTitle("History")
+            .alert("Delete Workout?", isPresented: $showingDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {
+                    workoutToDelete = nil
+                }
+                Button("Delete", role: .destructive) {
+                    if let workout = workoutToDelete {
+                        deleteWorkout(workout)
+                    }
+                }
+            } message: {
+                if let workout = workoutToDelete {
+                    Text("Are you sure you want to delete this \(workout.liftType.rawValue) workout from \(dateString(for: workout.date))? This cannot be undone.")
+                }
+            }
         }
+    }
+
+    // MARK: - Delete Workout
+
+    private func deleteWorkout(_ workout: Workout) {
+        // Delete associated sets
+        if let sets = workout.sets {
+            for set in sets {
+                // Remove any PR records linked to this set
+                if let pr = personalRecords.first(where: { $0.workoutSetId == set.id }) {
+                    modelContext.delete(pr)
+                }
+                modelContext.delete(set)
+            }
+        }
+
+        // Delete the workout
+        modelContext.delete(workout)
+
+        try? modelContext.save()
+        workoutToDelete = nil
     }
 
     // MARK: - Month Header
@@ -182,6 +219,24 @@ struct CalendarView: View {
                 }
                 .padding(.top, 8)
             }
+
+            Divider()
+                .padding(.top, 8)
+
+            // Delete button
+            Button(role: .destructive) {
+                workoutToDelete = workout
+                showingDeleteConfirmation = true
+            } label: {
+                HStack {
+                    Image(systemName: "trash")
+                    Text("Delete Workout")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
         }
         .padding()
         .background(Color(.secondarySystemBackground))
