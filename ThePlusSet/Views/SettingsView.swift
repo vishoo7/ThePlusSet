@@ -1,16 +1,22 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var settingsArray: [AppSettings]
     @Query private var trainingMaxes: [TrainingMax]
+    @Query(sort: \Workout.date, order: .reverse) private var allWorkouts: [Workout]
+    @Query(sort: \PersonalRecord.date, order: .reverse) private var personalRecords: [PersonalRecord]
+    @Query private var cycleProgressArray: [CycleProgress]
 
     @State private var showingPlateEditor = false
     @State private var showingTMEditor = false
     @State private var showingExerciseOrderEditor = false
     @State private var isSyncing = false
     @State private var showSyncConfirmation = false
+    @State private var exportText: String = ""
+    @State private var showingExportShare = false
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -203,6 +209,24 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                // Export Section
+                Section("Data") {
+                    Button {
+                        exportText = generateExportText()
+                        showingExportShare = true
+                    } label: {
+                        HStack {
+                            Text("Export Workout History")
+                            Spacer()
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+
+                    Text("Export your workout data as a text file for AI analysis or backup")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 // About Section
                 Section("About") {
                     NavigationLink {
@@ -220,6 +244,11 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $showingExportShare) {
+                if #available(iOS 16.0, *) {
+                    ShareSheet(text: exportText)
+                }
+            }
             .sheet(isPresented: $showingPlateEditor) {
                 PlateEditorSheet(settings: settings)
             }
@@ -259,6 +288,131 @@ struct SettingsView: View {
         } else {
             return "\(mins):\(String(format: "%02d", secs))"
         }
+    }
+
+    private func generateExportText() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+
+        let shortDateFormatter = DateFormatter()
+        shortDateFormatter.dateFormat = "yyyy-MM-dd"
+
+        var text = """
+        # The Plus Set - Workout Export
+        Generated: \(dateFormatter.string(from: Date()))
+
+        ## About This Data
+        This export contains workout history from "The Plus Set" app, which tracks
+        the Wendler 5/3/1 strength training program with BBB (Boring But Big) assistance work.
+
+        ### Program Overview
+        - 4-week cycles with progressive overload
+        - Week 1: 5/5/5+ (65%, 75%, 85% of Training Max)
+        - Week 2: 3/3/3+ (70%, 80%, 90% of Training Max)
+        - Week 3: 5/3/1+ (75%, 85%, 95% of Training Max)
+        - Week 4: Deload (40%, 50%, 60% - no warmup/BBB)
+        - The "+" sets are AMRAP (As Many Reps As Possible)
+        - BBB: 5 sets of 10 reps at a lower percentage
+
+        ## Current Settings
+
+        """
+
+        // Training Maxes
+        text += "### Training Maxes\n"
+        for liftType in LiftType.allCases {
+            if let tm = trainingMaxes.first(where: { $0.liftType == liftType }) {
+                text += "- \(liftType.rawValue): \(PlateCalculator.formatWeight(tm.weight)) lbs\n"
+            }
+        }
+
+        // Exercise Order
+        text += "\n### Exercise Order\n"
+        for (index, lift) in settings.exerciseOrder.enumerated() {
+            text += "\(index + 1). \(lift.rawValue)\n"
+        }
+
+        // Equipment
+        text += "\n### Equipment\n"
+        text += "- Bar Weight: \(PlateCalculator.formatWeight(settings.barWeight)) lbs\n"
+        text += "- Available Plates: \(settings.availablePlates.map { PlateCalculator.formatWeight($0) }.joined(separator: ", ")) lbs\n"
+
+        // Program Settings
+        text += "\n### Program Settings\n"
+        text += "- Training Max Percentage: \(Int(settings.trainingMaxPercentage * 100))%\n"
+        text += "- BBB Percentage: \(Int(settings.bbbPercentage * 100))%\n"
+
+        // Current Progress
+        if let progress = cycleProgressArray.first {
+            text += "\n### Current Progress\n"
+            text += "- Cycle: \(progress.cycleNumber)\n"
+            text += "- Week: \(progress.currentWeek) (\(progress.weekDescription))\n"
+            text += "- Day: \(progress.currentDay + 1) of 4\n"
+        }
+
+        // Personal Records
+        if !personalRecords.isEmpty {
+            text += "\n## Personal Records\n"
+            text += "PRs are calculated using the Epley formula: weight × (1 + reps/30)\n\n"
+
+            let prsByLift = Dictionary(grouping: personalRecords) { $0.liftType }
+            for liftType in LiftType.allCases {
+                if let prs = prsByLift[liftType], let bestPR = prs.first {
+                    text += "### \(liftType.rawValue)\n"
+                    text += "- Best Estimated 1RM: \(PlateCalculator.formatWeight(bestPR.estimated1RM)) lbs\n"
+                    text += "- Achieved: \(PlateCalculator.formatWeight(bestPR.weight)) lbs × \(bestPR.reps) reps\n"
+                    text += "- Date: \(shortDateFormatter.string(from: bestPR.date))\n\n"
+                }
+            }
+        }
+
+        // Workout History
+        text += "\n## Workout History\n"
+        text += "Total Workouts: \(allWorkouts.filter { $0.isComplete }.count)\n\n"
+
+        let completedWorkouts = allWorkouts.filter { $0.isComplete }.sorted { $0.date > $1.date }
+
+        for workout in completedWorkouts {
+            text += "### \(shortDateFormatter.string(from: workout.date)) - \(workout.liftType.rawValue)\n"
+            text += "Cycle \(workout.cycleNumber), Week \(workout.weekNumber)\n"
+
+            if !workout.warmupSets.isEmpty {
+                text += "\nWarmup:\n"
+                for set in workout.warmupSets {
+                    let repsText = set.actualReps != nil ? "\(set.actualReps!)" : "-"
+                    text += "  - \(PlateCalculator.formatWeight(set.targetWeight)) lbs × \(repsText) reps\n"
+                }
+            }
+
+            if !workout.mainSets.isEmpty {
+                text += "\nWorking Sets:\n"
+                for set in workout.mainSets {
+                    let repsText = set.actualReps != nil ? "\(set.actualReps!)" : "-"
+                    let amrapMarker = set.isAMRAP ? " (AMRAP)" : ""
+                    text += "  - \(PlateCalculator.formatWeight(set.targetWeight)) lbs × \(repsText) reps\(amrapMarker)\n"
+                }
+            }
+
+            if !workout.bbbSets.isEmpty {
+                text += "\nBBB (5×10):\n"
+                for set in workout.bbbSets {
+                    let repsText = set.actualReps != nil ? "\(set.actualReps!)" : "-"
+                    text += "  - \(PlateCalculator.formatWeight(set.targetWeight)) lbs × \(repsText) reps\n"
+                }
+            }
+
+            text += "\n"
+        }
+
+        text += """
+
+        ---
+        Export from The Plus Set app
+        https://github.com/your-repo/the-plus-set
+        """
+
+        return text
     }
 }
 
@@ -535,6 +689,26 @@ struct ExerciseOrderSheet: View {
             }
         }
     }
+}
+
+// MARK: - Share Sheet
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let text: String
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let textData = text.data(using: .utf8)!
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("ThePlusSet_Export.txt")
+        try? textData.write(to: tempURL)
+
+        let activityViewController = UIActivityViewController(
+            activityItems: [tempURL],
+            applicationActivities: nil
+        )
+        return activityViewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {
