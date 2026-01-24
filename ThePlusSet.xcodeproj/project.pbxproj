@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -37,6 +37,16 @@
 		B10000000000000000000001 /* WendlerCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WendlerCalculatorTests.swift */; };
 		B10000000000000000000002 /* PlateCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* PlateCalculatorTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B50000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A60000000000000000000001;
+			remoteInfo = ThePlusSet;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* ThePlusSetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThePlusSetApp.swift; sourceTree = "<group>"; };
@@ -74,6 +84,10 @@
 		B30000000000000000000001 /* ThePlusSetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThePlusSetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		37277A3B2F253C4C003278C4 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		A40000000000000000000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -91,24 +105,6 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXContainerItemProxy section */
-		B50000000000000000000001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA0000000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A60000000000000000000001;
-			remoteInfo = ThePlusSet;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXTargetDependency section */
-		B60000000000000000000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A60000000000000000000001 /* ThePlusSet */;
-			targetProxy = B50000000000000000000001 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXGroup section */
 		A50000000000000000000001 = {
 			isa = PBXGroup;
@@ -119,18 +115,10 @@
 			);
 			sourceTree = "<group>";
 		};
-		B50000000000000000000010 /* ThePlusSetTests */ = {
-			isa = PBXGroup;
-			children = (
-				B20000000000000000000001 /* WendlerCalculatorTests.swift */,
-				B20000000000000000000002 /* PlateCalculatorTests.swift */,
-			);
-			path = ThePlusSetTests;
-			sourceTree = "<group>";
-		};
 		A50000000000000000000002 /* ThePlusSet */ = {
 			isa = PBXGroup;
 			children = (
+				37277A3B2F253C4C003278C4 /* docs */,
 				A20000000000000000000001 /* ThePlusSetApp.swift */,
 				A20000000000000000000026 /* Info.plist */,
 				A20000000000000000000027 /* ThePlusSet.entitlements */,
@@ -221,6 +209,15 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		B50000000000000000000010 /* ThePlusSetTests */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* WendlerCalculatorTests.swift */,
+				B20000000000000000000002 /* PlateCalculatorTests.swift */,
+			);
+			path = ThePlusSetTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -235,6 +232,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				37277A3B2F253C4C003278C4 /* docs */,
 			);
 			name = ThePlusSet;
 			productName = ThePlusSet;
@@ -351,6 +351,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B60000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A60000000000000000000001 /* ThePlusSet */;
+			targetProxy = B50000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AC0000000000000000000001 /* Debug */ = {
