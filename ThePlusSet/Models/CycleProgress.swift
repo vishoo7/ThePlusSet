@@ -50,4 +50,11 @@ final class CycleProgress {
             }
         }
     }
+
+    func resetCycle() {
+        cycleNumber = 1
+        currentWeek = 1
+        currentDay = 0
+        startDate = Date()
+    }
 }

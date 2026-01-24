@@ -58,7 +58,11 @@ struct OnboardingView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(.blue)
 
-            Text("Welcome to Plus One")
+            Text("Welcome to")
+                .font(.title)
+                .foregroundStyle(.secondary)
+
+            Text("The Plus Set")
                 .font(.largeTitle)
                 .fontWeight(.bold)
 

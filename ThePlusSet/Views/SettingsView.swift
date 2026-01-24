@@ -18,6 +18,8 @@ struct SettingsView: View {
     @State private var showSyncConfirmation = false
     @State private var exportText: String = ""
     @State private var showingExportShare = false
+    @State private var showingResetCycleConfirmation = false
+    @FocusState private var isBarWeightFocused: Bool
 
     private var settings: AppSettings {
         settingsArray.first ?? AppSettings()
@@ -26,6 +28,33 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                // App Header
+                Section {
+                    HStack(spacing: 12) {
+                        if let iconImage = getAppIcon() {
+                            Image(uiImage: iconImage)
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            Image(systemName: "figure.strengthtraining.traditional")
+                                .font(.system(size: 30))
+                                .foregroundStyle(.blue)
+                                .frame(width: 50, height: 50)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("The Plus Set")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            Text("Wendler 5/3/1 Tracker")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+
                 // Training Maxes Section
                 Section("Training Maxes") {
                     ForEach(LiftType.allCases) { liftType in
@@ -71,6 +100,7 @@ struct SettingsView: View {
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 60)
+                        .focused($isBarWeightFocused)
                         Text("lbs")
                             .foregroundStyle(.secondary)
                     }
@@ -229,6 +259,41 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                // Cycle Progress Section
+                Section("Cycle Progress") {
+                    if let progress = cycleProgressArray.first {
+                        HStack {
+                            Text("Current Cycle")
+                            Spacer()
+                            Text("Cycle \(progress.cycleNumber)")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Text("Current Week")
+                            Spacer()
+                            Text(progress.weekDescription)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Text("Workout")
+                            Spacer()
+                            Text("\(progress.currentDay + 1) of 4")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Button(role: .destructive) {
+                            showingResetCycleConfirmation = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.counterclockwise")
+                                Text("Reset Cycle")
+                            }
+                        }
+                    }
+                }
+
                 // Export Section
                 Section("Data") {
                     Button {
@@ -278,6 +343,22 @@ struct SettingsView: View {
             .sheet(isPresented: $showingExerciseOrderEditor) {
                 ExerciseOrderSheet(settings: settings)
             }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        isBarWeightFocused = false
+                    }
+                }
+            }
+            .alert("Reset Cycle?", isPresented: $showingResetCycleConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Reset", role: .destructive) {
+                    resetCycle()
+                }
+            } message: {
+                Text("This will reset your progress back to Week 1, Workout 1 of Cycle 1. Any incomplete workout for today will be cleared. Your training maxes and workout history will be preserved.")
+            }
         }
     }
 
@@ -322,6 +403,39 @@ struct SettingsView: View {
         case 1057: return "Tink"
         default: return "Default"
         }
+    }
+
+    private func resetCycle() {
+        // Reset cycle progress
+        if let progress = cycleProgressArray.first {
+            progress.resetCycle()
+        }
+
+        // Clear today's incomplete workout
+        let today = Calendar.current.startOfDay(for: Date())
+        if let todayWorkout = allWorkouts.first(where: {
+            Calendar.current.isDate($0.date, inSameDayAs: today) && !$0.isComplete
+        }) {
+            // Delete associated sets
+            if let sets = todayWorkout.sets {
+                for set in sets {
+                    modelContext.delete(set)
+                }
+            }
+            modelContext.delete(todayWorkout)
+        }
+
+        try? modelContext.save()
+    }
+
+    private func getAppIcon() -> UIImage? {
+        guard let iconsDictionary = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+              let primaryIconsDictionary = iconsDictionary["CFBundlePrimaryIcon"] as? [String: Any],
+              let iconFiles = primaryIconsDictionary["CFBundleIconFiles"] as? [String],
+              let iconFileName = iconFiles.last else {
+            return nil
+        }
+        return UIImage(named: iconFileName)
     }
 
     private func generateExportText() -> String {

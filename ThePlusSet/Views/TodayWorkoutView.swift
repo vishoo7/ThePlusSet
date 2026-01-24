@@ -106,8 +106,7 @@ struct TodayWorkoutView: View {
                             onStop: { timerVM.stop(); showTimerOverlay = false },
                             onDismiss: { showTimerOverlay = false }
                         )
-                        .padding()
-                        .padding(.bottom, 90)
+                        .padding(.horizontal)
                     }
                     .transition(.move(edge: .bottom))
                 }
@@ -159,6 +158,11 @@ struct TodayWorkoutView: View {
 
     private var cycleHeader: some View {
         VStack(spacing: 8) {
+            Text("The Plus Set")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.tertiary)
+
             Text("Cycle \(cycleProgress.cycleNumber)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -183,7 +187,7 @@ struct TodayWorkoutView: View {
                                 }
                             }
                         } label: {
-                            Image(systemName: "arrow.triangle.2.circlepath")
+                            Image(systemName: "arrow.left.arrow.right")
                                 .font(.title3)
                                 .foregroundStyle(.blue)
                         }
@@ -214,6 +218,11 @@ struct TodayWorkoutView: View {
                     onTap: {
                         if !set.isComplete {
                             selectedSet = set
+                        }
+                    },
+                    onQuickComplete: {
+                        if !set.isComplete {
+                            quickCompleteSet(set)
                         }
                     }
                 )
@@ -454,6 +463,11 @@ struct TodayWorkoutView: View {
         try? modelContext.save()
     }
 
+    private func quickCompleteSet(_ set: WorkoutSet) {
+        // Quick complete uses the target reps
+        completeSet(set, reps: set.targetReps)
+    }
+
     private func completeSet(_ set: WorkoutSet, reps: Int) {
         set.complete(reps: reps)
         try? modelContext.save()
@@ -467,15 +481,54 @@ struct TodayWorkoutView: View {
         } else {
             restTime = settings.mainSetRestSeconds
         }
+
+        // Find next incomplete set
+        let nextSet = findNextIncompleteSet(after: set)
+        let nextSetPlates = nextSet.map {
+            PlateCalculator.platesPerSide(
+                targetWeight: $0.targetWeight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+        } ?? []
+
         // Set the chime sound from settings
         NotificationManager.shared.chimeSoundID = SystemSoundID(settings.timerChimeSoundID)
-        timerVM.start(seconds: restTime)
+        timerVM.start(
+            seconds: restTime,
+            nextSetWeight: nextSet?.targetWeight,
+            nextSetReps: nextSet?.targetReps,
+            nextSetPlates: nextSetPlates,
+            nextSetIsAMRAP: nextSet?.isAMRAP ?? false
+        )
         showTimerOverlay = true
 
         // Check for PR on AMRAP sets
         if set.isAMRAP, let workout = currentWorkout {
             checkForPR(set: set, workout: workout, reps: reps)
         }
+    }
+
+    private func findNextIncompleteSet(after completedSet: WorkoutSet) -> WorkoutSet? {
+        guard let workout = currentWorkout,
+              workout.sets != nil else { return nil }
+
+        // Order: warmup -> main -> BBB
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+
+        // Find the index of the completed set
+        guard let completedIndex = orderedSets.firstIndex(where: { $0.id == completedSet.id }) else {
+            return nil
+        }
+
+        // Find the next incomplete set after this one
+        for i in (completedIndex + 1)..<orderedSets.count {
+            if !orderedSets[i].isComplete {
+                return orderedSets[i]
+            }
+        }
+
+        return nil
     }
 
     private func checkForPR(set: WorkoutSet, workout: Workout, reps: Int) {

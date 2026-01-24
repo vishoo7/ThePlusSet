@@ -17,6 +17,47 @@ struct TimerView: View {
                 .frame(width: 40, height: 5)
                 .padding(.top, 8)
 
+            // Next set info
+            if let weight = timerVM.nextSetWeight, let reps = timerVM.nextSetReps {
+                VStack(spacing: 6) {
+                    Text("Next Set")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+
+                    HStack(spacing: 8) {
+                        Text("\(PlateCalculator.formatWeight(weight)) lbs")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+
+                        Text("×")
+                            .foregroundStyle(.secondary)
+
+                        Text(timerVM.nextSetIsAMRAP ? "\(reps)+" : "\(reps)")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(timerVM.nextSetIsAMRAP ? .orange : .primary)
+                    }
+
+                    if !timerVM.nextSetPlates.isEmpty {
+                        HStack(spacing: 4) {
+                            Text("Load per side:")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text(PlateCalculator.formatPlates(timerVM.nextSetPlates))
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+
             // Progress circle with time
             ZStack {
                 Circle()
@@ -86,8 +127,9 @@ struct TimerView: View {
             .tint(.orange)
         }
         .padding()
+        .padding(.bottom, 8)
         .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 20))
         .shadow(radius: 10)
         .offset(y: dragOffset)
         .gesture(

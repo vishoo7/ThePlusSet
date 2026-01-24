@@ -7,6 +7,12 @@ class TimerViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var totalSeconds: Int = 0
 
+    // Next set info for display during rest
+    @Published var nextSetWeight: Double?
+    @Published var nextSetReps: Int?
+    @Published var nextSetPlates: [Double] = []
+    @Published var nextSetIsAMRAP: Bool = false
+
     private var timer: Timer?
     private let notificationManager = NotificationManager.shared
 
@@ -22,10 +28,20 @@ class TimerViewModel: ObservableObject {
     }
 
     func start(seconds: Int) {
+        start(seconds: seconds, nextSetWeight: nil, nextSetReps: nil, nextSetPlates: [], nextSetIsAMRAP: false)
+    }
+
+    func start(seconds: Int, nextSetWeight: Double?, nextSetReps: Int?, nextSetPlates: [Double], nextSetIsAMRAP: Bool) {
         stop()
         totalSeconds = seconds
         remainingSeconds = seconds
         isRunning = true
+
+        // Store next set info
+        self.nextSetWeight = nextSetWeight
+        self.nextSetReps = nextSetReps
+        self.nextSetPlates = nextSetPlates
+        self.nextSetIsAMRAP = nextSetIsAMRAP
 
         notificationManager.scheduleRestTimerNotification(seconds: seconds)
 
@@ -42,6 +58,10 @@ class TimerViewModel: ObservableObject {
         isRunning = false
         remainingSeconds = 0
         totalSeconds = 0
+        nextSetWeight = nil
+        nextSetReps = nil
+        nextSetPlates = []
+        nextSetIsAMRAP = false
         notificationManager.cancelRestTimerNotification()
     }
 
