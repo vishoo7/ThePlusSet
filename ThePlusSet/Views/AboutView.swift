@@ -12,7 +12,7 @@ struct AboutView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.blue)
 
-                    Text("Plus One")
+                    Text("The Plus Set")
                         .font(.largeTitle)
                         .fontWeight(.bold)
 
@@ -68,7 +68,7 @@ struct AboutView: View {
                     Label("Contribute", systemImage: "hands.clap")
                         .font(.headline)
 
-                    Text("Plus One is open source. Found a bug? Have a feature idea? Contributions are welcome!")
+                    Text("The Plus Set is open source. Found a bug? Have a feature idea? Contributions are welcome!")
                         .font(.body)
 
                     Link(destination: URL(string: "https://github.com/vishoo7/PlusOne")!) {

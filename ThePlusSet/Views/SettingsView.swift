@@ -192,7 +192,7 @@ struct SettingsView: View {
                     NavigationLink {
                         AboutView()
                     } label: {
-                        Text("About Plus One")
+                        Text("About The Plus Set")
                     }
 
                     HStack {

@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct PlusOneApp: App {
+struct ThePlusSetApp: App {
     let modelContainer: ModelContainer
 
     init() {

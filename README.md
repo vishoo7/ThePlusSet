@@ -1,4 +1,4 @@
-# Plus One
+# The Plus Set
 
 A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance work.
 
@@ -50,13 +50,13 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 ## Project Structure
 
 ```
-PlusOne/
-├── PlusOne.xcodeproj/
+ThePlusSet/
+├── ThePlusSet.xcodeproj/
 │   └── project.pbxproj
-└── PlusOne/
-    ├── PlusOneApp.swift              # App entry point with SwiftData + CloudKit
+└── ThePlusSet/
+    ├── ThePlusSetApp.swift           # App entry point with SwiftData + CloudKit
     ├── Info.plist                    # App configuration
-    ├── PlusOne.entitlements          # iCloud/CloudKit entitlements
+    ├── ThePlusSet.entitlements       # iCloud/CloudKit entitlements
     │
     ├── Models/
     │   ├── LiftType.swift            # Enum: Squat, Bench, Deadlift, OHP
@@ -106,16 +106,16 @@ PlusOne/
 ## Setup
 
 1. Clone the repository
-2. Open `PlusOne.xcodeproj` in Xcode
+2. Open `ThePlusSet.xcodeproj` in Xcode
 3. Select your Development Team in Signing & Capabilities
-4. Update the Bundle Identifier if needed (default: `com.plusone.app`)
+4. Update the Bundle Identifier if needed (default: `com.theplusset.app`)
 5. Build and run on your device or simulator
 
 ### CloudKit Setup
 
 The app uses CloudKit for syncing data across devices. To enable:
 
-1. In Xcode, select the PlusOne target
+1. In Xcode, select the ThePlusSet target
 2. Go to Signing & Capabilities
 3. Ensure "iCloud" capability is added with CloudKit enabled
 4. The container `iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)` will be created automatically
