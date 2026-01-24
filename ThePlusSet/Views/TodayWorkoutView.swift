@@ -91,6 +91,13 @@ struct TodayWorkoutView: View {
 
                 // Timer overlay
                 if timerVM.isRunning && showTimerOverlay {
+                    // Tap outside to dismiss
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showTimerOverlay = false
+                        }
+
                     VStack {
                         Spacer()
                         TimerView(
@@ -100,6 +107,7 @@ struct TodayWorkoutView: View {
                             onDismiss: { showTimerOverlay = false }
                         )
                         .padding()
+                        .padding(.bottom, 20)
                     }
                     .transition(.move(edge: .bottom))
                 }
