@@ -8,6 +8,7 @@ struct SettingsView: View {
 
     @State private var showingPlateEditor = false
     @State private var showingTMEditor = false
+    @State private var showingExerciseOrderEditor = false
     @State private var isSyncing = false
     @State private var showSyncConfirmation = false
 
@@ -33,6 +34,21 @@ struct SettingsView: View {
 
                     Button("Edit Training Maxes") {
                         showingTMEditor = true
+                    }
+                }
+
+                // Exercise Order Section
+                Section("Exercise Order") {
+                    ForEach(settings.exerciseOrder) { lift in
+                        HStack {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                            Text(lift.rawValue)
+                        }
+                    }
+
+                    Button("Change Order") {
+                        showingExerciseOrderEditor = true
                     }
                 }
 
@@ -77,7 +93,7 @@ struct SettingsView: View {
                                 get: { settings.trainingMaxPercentage },
                                 set: { settings.trainingMaxPercentage = $0 }
                             ),
-                            in: 0.85...0.95,
+                            in: 0.80...1.0,
                             step: 0.05
                         )
                         Text("Training Max = 1RM × \(Int(settings.trainingMaxPercentage * 100))%")
@@ -209,6 +225,9 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showingTMEditor) {
                 TMEditorSheet(trainingMaxes: trainingMaxes)
+            }
+            .sheet(isPresented: $showingExerciseOrderEditor) {
+                ExerciseOrderSheet(settings: settings)
             }
         }
     }
@@ -460,6 +479,59 @@ struct TMEditorSheet: View {
                 for tm in trainingMaxes {
                     editedValues[tm.liftType] = tm.weight
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Exercise Order Sheet
+
+struct ExerciseOrderSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let settings: AppSettings
+
+    @State private var exerciseOrder: [LiftType] = []
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(exerciseOrder) { lift in
+                        HStack {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                            Text(lift.rawValue)
+                        }
+                    }
+                    .onMove { from, to in
+                        exerciseOrder.move(fromOffsets: from, toOffset: to)
+                    }
+                } footer: {
+                    Text("Drag to reorder exercises. This determines the workout rotation order.")
+                }
+
+                Section {
+                    Button("Reset to Default") {
+                        exerciseOrder = [.squat, .bench, .deadlift, .overheadPress]
+                    }
+                }
+            }
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle("Exercise Order")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        settings.exerciseOrder = exerciseOrder
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear {
+                exerciseOrder = settings.exerciseOrder
             }
         }
     }

@@ -152,6 +152,10 @@ struct TodayWorkoutView: View {
         }
     }
 
+    private var suggestedLiftType: LiftType {
+        cycleProgress.liftType(for: settings)
+    }
+
     private var startWorkoutButton: some View {
         VStack(spacing: 16) {
             // Exercise picker
@@ -161,7 +165,7 @@ struct TodayWorkoutView: View {
                     .foregroundStyle(.secondary)
 
                 HStack(spacing: 12) {
-                    ForEach(LiftType.allCases) { lift in
+                    ForEach(settings.exerciseOrder) { lift in
                         Button {
                             selectedLiftType = lift
                         } label: {
@@ -171,12 +175,12 @@ struct TodayWorkoutView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                                 .background(
-                                    (selectedLiftType ?? cycleProgress.currentLiftType) == lift
+                                    (selectedLiftType ?? suggestedLiftType) == lift
                                         ? Color.blue
                                         : Color(.secondarySystemBackground)
                                 )
                                 .foregroundStyle(
-                                    (selectedLiftType ?? cycleProgress.currentLiftType) == lift
+                                    (selectedLiftType ?? suggestedLiftType) == lift
                                         ? .white
                                         : .primary
                                 )
@@ -198,7 +202,7 @@ struct TodayWorkoutView: View {
                         .font(.system(size: 48))
                     Text("Start Workout")
                         .font(.headline)
-                    Text("\((selectedLiftType ?? cycleProgress.currentLiftType).rawValue) - \(cycleProgress.weekDescription)")
+                    Text("\((selectedLiftType ?? suggestedLiftType).rawValue) - \(cycleProgress.weekDescription)")
                         .font(.subheadline)
                         .opacity(0.8)
                 }

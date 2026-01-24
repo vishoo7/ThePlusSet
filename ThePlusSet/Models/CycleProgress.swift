@@ -26,8 +26,17 @@ final class CycleProgress {
     }
 
     var currentLiftType: LiftType {
+        // Default order - use liftType(for:) with settings for custom order
         let lifts: [LiftType] = [.squat, .bench, .deadlift, .overheadPress]
         return lifts[currentDay % 4]
+    }
+
+    func liftType(for settings: AppSettings) -> LiftType {
+        let order = settings.exerciseOrder
+        guard !order.isEmpty else {
+            return currentLiftType
+        }
+        return order[currentDay % order.count]
     }
 
     func advanceToNextWorkout() {
