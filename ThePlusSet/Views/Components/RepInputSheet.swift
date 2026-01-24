@@ -17,93 +17,94 @@ struct RepInputSheet: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 32) {
-                // Set info
-                VStack(spacing: 8) {
-                    Text("\(PlateCalculator.formatWeight(set.targetWeight)) lbs")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-
-                    if set.isAMRAP {
-                        Text("AMRAP Set - How many did you get?")
-                            .font(.headline)
-                            .foregroundStyle(.orange)
-                    } else {
-                        Text("Target: \(set.targetReps) reps")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                // Rep input
-                VStack(spacing: 16) {
-                    HStack(spacing: 20) {
-                        Button {
-                            if reps > 1 { reps -= 1 }
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.system(size: 44))
-                                .foregroundStyle(.blue)
-                        }
-
-                        Text("\(reps)")
-                            .font(.system(size: 72, weight: .bold, design: .rounded))
-                            .frame(minWidth: 100)
-
-                        Button {
-                            reps += 1
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 44))
-                                .foregroundStyle(.blue)
-                        }
-                    }
-
-                    Text("reps")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
-                }
-
-                // Quick select buttons for AMRAP
-                if set.isAMRAP {
+            ScrollView {
+                VStack(spacing: 32) {
+                    // Set info
                     VStack(spacing: 8) {
-                        Text("Quick Select")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Text("\(PlateCalculator.formatWeight(set.targetWeight)) lbs")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
 
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 8) {
-                            ForEach(quickSelectRange, id: \.self) { num in
-                                Button {
-                                    reps = num
-                                } label: {
-                                    Text("\(num)")
-                                        .font(.headline)
-                                        .frame(width: 50, height: 44)
-                                        .background(reps == num ? Color.blue : Color(.secondarySystemBackground))
-                                        .foregroundStyle(reps == num ? .white : .primary)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        if set.isAMRAP {
+                            Text("AMRAP Set - How many did you get?")
+                                .font(.headline)
+                                .foregroundStyle(.orange)
+                        } else {
+                            Text("Target: \(set.targetReps) reps")
+                                .font(.headline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    // Rep input
+                    VStack(spacing: 16) {
+                        HStack(spacing: 20) {
+                            Button {
+                                if reps > 1 { reps -= 1 }
+                            } label: {
+                                Image(systemName: "minus.circle.fill")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(.blue)
+                            }
+
+                            Text("\(reps)")
+                                .font(.system(size: 72, weight: .bold, design: .rounded))
+                                .frame(minWidth: 100)
+
+                            Button {
+                                reps += 1
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+
+                        Text("reps")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Quick select buttons for AMRAP
+                    if set.isAMRAP {
+                        VStack(spacing: 8) {
+                            Text("Quick Select")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 8) {
+                                ForEach(quickSelectRange, id: \.self) { num in
+                                    Button {
+                                        reps = num
+                                    } label: {
+                                        Text("\(num)")
+                                            .font(.headline)
+                                            .frame(width: 50, height: 44)
+                                            .background(reps == num ? Color.blue : Color(.secondarySystemBackground))
+                                            .foregroundStyle(reps == num ? .white : .primary)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                Spacer()
-
-                // Complete button
-                Button {
-                    onComplete(reps)
-                } label: {
-                    Text("Complete Set")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    // Complete button
+                    Button {
+                        onComplete(reps)
+                    } label: {
+                        Text("Complete Set")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.top, 20)
                 }
+                .padding()
             }
-            .padding()
             .navigationTitle("Log Reps")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
