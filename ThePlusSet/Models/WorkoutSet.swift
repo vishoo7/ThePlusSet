@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class WorkoutSet {
+final class WorkoutSet: Identifiable {
     var id: UUID = UUID()
     var setNumber: Int = 0
     var targetWeight: Double = 0

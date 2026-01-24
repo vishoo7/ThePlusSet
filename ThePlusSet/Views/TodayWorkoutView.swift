@@ -14,7 +14,6 @@ struct TodayWorkoutView: View {
 
     @State private var currentWorkout: Workout?
     @State private var selectedSet: WorkoutSet?
-    @State private var showingRepInput = false
     @State private var showingNewCycleSheet = false
     @State private var pendingNewTMs: [LiftType: Double] = [:]
     @State private var showingPRCelebration = false
@@ -83,22 +82,18 @@ struct TodayWorkoutView: View {
                 }
             }
             .navigationTitle("Today's Workout")
-            .sheet(isPresented: $showingRepInput) {
-                if let set = selectedSet {
-                    RepInputSheet(
-                        set: set,
-                        onComplete: { reps in
-                            completeSet(set, reps: reps)
-                            showingRepInput = false
-                            selectedSet = nil
-                        },
-                        onCancel: {
-                            showingRepInput = false
-                            selectedSet = nil
-                        }
-                    )
-                    .presentationDetents([.medium])
-                }
+            .sheet(item: $selectedSet) { set in
+                RepInputSheet(
+                    set: set,
+                    onComplete: { reps in
+                        completeSet(set, reps: reps)
+                        selectedSet = nil
+                    },
+                    onCancel: {
+                        selectedSet = nil
+                    }
+                )
+                .presentationDetents([.medium])
             }
             .sheet(isPresented: $showingNewCycleSheet) {
                 newCycleSheet
@@ -150,7 +145,6 @@ struct TodayWorkoutView: View {
                     onTap: {
                         if !set.isComplete {
                             selectedSet = set
-                            showingRepInput = true
                         }
                     }
                 )
