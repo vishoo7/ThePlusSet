@@ -34,6 +34,8 @@
 		A10000000000000000000025 /* PRBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* PRBadgeView.swift */; };
 		A10000000000000000000026 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* AboutView.swift */; };
 		A10000000000000000000029 /* TimerTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* TimerTabView.swift */; };
+		B10000000000000000000001 /* WendlerCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WendlerCalculatorTests.swift */; };
+		B10000000000000000000002 /* PlateCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* PlateCalculatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +69,9 @@
 		A20000000000000000000028 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* TimerTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTabView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* ThePlusSet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThePlusSet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B20000000000000000000001 /* WendlerCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WendlerCalculatorTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* PlateCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlateCalculatorTests.swift; sourceTree = "<group>"; };
+		B30000000000000000000001 /* ThePlusSetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThePlusSetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,15 +82,50 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B40000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		B50000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A60000000000000000000001;
+			remoteInfo = ThePlusSet;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		B60000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A60000000000000000000001 /* ThePlusSet */;
+			targetProxy = B50000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXGroup section */
 		A50000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
 				A50000000000000000000002 /* ThePlusSet */,
+				B50000000000000000000010 /* ThePlusSetTests */,
 				A50000000000000000000003 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		B50000000000000000000010 /* ThePlusSetTests */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* WendlerCalculatorTests.swift */,
+				B20000000000000000000002 /* PlateCalculatorTests.swift */,
+			);
+			path = ThePlusSetTests;
 			sourceTree = "<group>";
 		};
 		A50000000000000000000002 /* ThePlusSet */ = {
@@ -107,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				A30000000000000000000001 /* ThePlusSet.app */,
+				B30000000000000000000001 /* ThePlusSetTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,6 +241,23 @@
 			productReference = A30000000000000000000001 /* ThePlusSet.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B60000000000000000000010 /* ThePlusSetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70000000000000000000001 /* Build configuration list for PBXNativeTarget "ThePlusSetTests" */;
+			buildPhases = (
+				B80000000000000000000001 /* Sources */,
+				B40000000000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B60000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = ThePlusSetTests;
+			productName = ThePlusSetTests;
+			productReference = B30000000000000000000001 /* ThePlusSetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -212,6 +270,10 @@
 				TargetAttributes = {
 					A60000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					B60000000000000000000010 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A60000000000000000000001;
 					};
 				};
 			};
@@ -229,6 +291,7 @@
 			projectRoot = "";
 			targets = (
 				A60000000000000000000001 /* ThePlusSet */,
+				B60000000000000000000010 /* ThePlusSetTests */,
 			);
 		};
 /* End PBXProject section */
@@ -275,6 +338,15 @@
 				A10000000000000000000025 /* PRBadgeView.swift in Sources */,
 				A10000000000000000000026 /* AboutView.swift in Sources */,
 				A10000000000000000000029 /* TimerTabView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B80000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* WendlerCalculatorTests.swift in Sources */,
+				B10000000000000000000002 /* PlateCalculatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +540,48 @@
 			};
 			name = Release;
 		};
+		BD0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YKB34T46U;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vishal.plusone.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ThePlusSet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ThePlusSet";
+			};
+			name = Debug;
+		};
+		BD0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YKB34T46U;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vishal.plusone.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ThePlusSet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ThePlusSet";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -485,6 +599,15 @@
 			buildConfigurations = (
 				AC0000000000000000000001 /* Debug */,
 				AC0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70000000000000000000001 /* Build configuration list for PBXNativeTarget "ThePlusSetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD0000000000000000000001 /* Debug */,
+				BD0000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

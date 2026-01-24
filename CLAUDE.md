@@ -18,6 +18,11 @@ iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance
 xcodebuild -project ThePlusSet.xcodeproj -scheme ThePlusSet -destination 'platform=iOS Simulator,name=iPhone 17' build
 ```
 
+## Test Command
+```bash
+xcodebuild test -project ThePlusSet.xcodeproj -scheme ThePlusSet -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:ThePlusSetTests
+```
+
 ## Key Files
 - `ThePlusSet/Models/AppSettings.swift` - User preferences and settings
 - `ThePlusSet/Views/TodayWorkoutView.swift` - Main workout screen
