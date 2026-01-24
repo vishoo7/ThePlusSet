@@ -11,7 +11,9 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Configurable Training Max percentage (80-100% of 1RM, default 90%)
 - Configurable BBB percentage (default: 50%)
 - Adjustable rest timer durations for warmup, working sets, and BBB
+- Configurable timer chime sound (8 options with preview)
 - View and edit training maxes anytime
+- Export workout history as text file (for AI analysis or backup)
 - Manual "Sync Now" button for iCloud sync
 
 ### Workout Structure
@@ -29,8 +31,10 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Tap a set to mark complete and enter actual reps performed
 - AMRAP sets (the + sets) prominently prompt for rep count
 - Automatic rest timer starts after logging any set
-- Timer shows countdown with visual progress ring (pull down to dismiss)
-- Timer completion triggers sound, vibration, and local notification (works when backgrounded)
+- Timer shows countdown with visual progress ring
+- Pull down timer overlay to dismiss (timer keeps running in background)
+- Dedicated Timer tab for accessing timer anytime with quick-start presets
+- Timer completion triggers configurable chime sound, vibration, and local notification
 
 ### Workout Flexibility
 - Choose which exercise to start when beginning a workout
@@ -77,6 +81,7 @@ ThePlusSet/
     ├── Views/
     │   ├── ContentView.swift         # Root view with tab bar navigation
     │   ├── TodayWorkoutView.swift    # Main workout screen
+    │   ├── TimerTabView.swift        # Dedicated timer tab with quick-start
     │   ├── CalendarView.swift        # Monthly history view
     │   ├── SettingsView.swift        # All configuration options
     │   ├── OnboardingView.swift      # First-launch setup flow
