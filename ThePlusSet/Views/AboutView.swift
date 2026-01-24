@@ -71,10 +71,10 @@ struct AboutView: View {
                     Text("The Plus Set is open source. Found a bug? Have a feature idea? Contributions are welcome!")
                         .font(.body)
 
-                    Link(destination: URL(string: "https://github.com/vishoo7/PlusOne")!) {
+                    Link(destination: URL(string: "https://github.com/vishoo7/ThePlusSet")!) {
                         HStack {
                             Image(systemName: "link")
-                            Text("github.com/vishoo7/PlusOne")
+                            Text("github.com/vishoo7/ThePlusSet")
                         }
                         .font(.body)
                     }
