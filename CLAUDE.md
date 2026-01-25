@@ -8,6 +8,21 @@ iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance
 - Merge to `main` when features are complete and tested
 - Push both branches after merging
 
+## Release Workflow (Xcode Cloud)
+Xcode Cloud is configured for **tag-based builds only** (pattern: `v*`).
+
+- **"ship it"** = commit to dev, merge to main, push both branches (no build triggered)
+- **"release it"** or **"tag it"** = also create and push a version tag to trigger Xcode Cloud build
+
+To create a release:
+```bash
+git tag v1.0.X
+git push origin v1.0.X
+```
+
+To check existing tags: `git tag`
+To delete a tag: `git tag -d v1.0.X && git push origin --delete v1.0.X`
+
 ## Preferences
 - Update README.md when adding/changing features that affect user-facing functionality
 - Commit messages should be descriptive with bullet points for multiple changes
