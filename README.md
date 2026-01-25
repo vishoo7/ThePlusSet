@@ -6,15 +6,17 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### Setup & Settings
 - Configure 4 main lifts (Squat, Bench Press, Deadlift, Overhead Press) with starting training maxes
-- Customizable exercise order (drag to reorder in settings)
+- Customizable exercise order (drag to reorder directly in settings)
 - Specify available plates (default: 45, 35, 25, 10, 5, 2.5 lbs) and bar weight (default: 45 lbs)
 - Configurable Training Max percentage (80-100% of 1RM, default 90%)
 - Configurable BBB percentage (default: 50%)
 - Adjustable rest timer durations for warmup, working sets, and BBB
 - Configurable timer chime sound (8 options with preview)
 - View and edit training maxes anytime
-- Export workout history as text file (for AI analysis or backup)
+- Reset cycle progress to start fresh (clears any in-progress workout)
+- Export workout history as markdown file with timestamp (for AI analysis or backup)
 - Manual "Sync Now" button for iCloud sync
+- Settings organized by frequency of use
 
 ### Workout Structure
 - **4-week cycles:**
@@ -28,10 +30,14 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### Set Display & Logging
 - Each set displays: target weight, target reps, and plate breakdown per side
-- Tap a set to mark complete and enter actual reps performed
+- Sets must be completed in sequence (next set is highlighted, others dimmed)
+- Tap a set to enter actual reps performed, or tap "Done" button for quick complete with target reps
+- Undo the last completed set by tapping its green checkmark (cascades to previous sets)
 - AMRAP sets (the + sets) prominently prompt for rep count
+- Add free-form notes to any workout
 - Automatic rest timer starts after logging any set
-- Timer shows countdown with visual progress ring
+- Timer shows next set info: weight, reps, set type (Warmup/Working/BBB), and plate loading
+- Timer displays as bottom sheet with visual progress ring
 - Pull down timer overlay to dismiss (timer keeps running in background)
 - Dedicated Timer tab for accessing timer anytime with quick-start presets
 - Timer completion triggers configurable chime sound, vibration, and local notification
@@ -49,7 +55,8 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### History & PRs
 - Calendar view with red dots on days with logged workouts
-- Tap any date to see full workout details (lift, sets, weights, reps performed)
+- Tap any date to see full workout details (lift, sets, weights, reps performed, notes)
+- Supports multiple workouts per day (all displayed in sequence)
 - Delete workouts from history (with confirmation)
 - Tracks PRs on AMRAP sets based on estimated 1RM
 - Highlights when a new PR is hit with celebration animation
