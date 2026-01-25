@@ -79,6 +79,9 @@ struct TodayWorkoutView: View {
                                 setsSection(title: "BBB Sets (5×10)", sets: workout.bbbSets)
                             }
 
+                            // Notes section
+                            notesSection(workout: workout)
+
                             // Complete workout button
                             if (workout.sets ?? []).allSatisfy({ $0.isComplete }) {
                                 completeWorkoutButton
@@ -241,6 +244,27 @@ struct TodayWorkoutView: View {
                 )
             }
         }
+    }
+
+    private func notesSection(workout: Workout) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Notes")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+
+            TextField("Add notes for this workout...", text: Binding(
+                get: { workout.notes },
+                set: {
+                    workout.notes = $0
+                    try? modelContext.save()
+                }
+            ), axis: .vertical)
+            .lineLimit(3...6)
+            .textFieldStyle(.roundedBorder)
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var suggestedLiftType: LiftType {
