@@ -65,6 +65,11 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - SwiftData for local persistence
 - CloudKit sync for automatic backup and multi-device sync
 
+### Open Source & Transparency
+- Full source code available in this repository
+- All App Store builds are compiled by Xcode Cloud directly from this public repository
+- Each release is tagged (e.g., `v1.0.0`) so you can verify the exact source for any version
+
 ## Project Structure
 
 ```
