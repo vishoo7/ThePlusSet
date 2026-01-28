@@ -337,17 +337,8 @@ struct CalendarView: View {
     }
 
     private func isPR(set: WorkoutSet, workout: Workout) -> Bool {
-        guard let actualReps = set.actualReps else { return false }
-
-        let estimated1RM = WendlerCalculator.estimatedOneRepMax(weight: set.targetWeight, reps: actualReps)
-
-        // Check if this set created a PR
-        if let pr = personalRecords.first(where: { $0.workoutSetId == set.id }) {
-            // This set is linked to a PR record
-            return true
-        }
-
-        return false
+        guard set.actualReps != nil else { return false }
+        return personalRecords.contains(where: { $0.workoutSetId == set.id })
     }
 }
 

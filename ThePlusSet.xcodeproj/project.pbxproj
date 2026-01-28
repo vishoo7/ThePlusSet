@@ -84,29 +84,6 @@
 		B30000000000000000000001 /* ThePlusSetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThePlusSetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		37277A3F2F253D45003278C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				index.md,
-			);
-			target = A60000000000000000000001 /* ThePlusSet */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		37277A402F253D45003278C4 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = A80000000000000000000001 /* Sources */;
-			membershipExceptions = (
-				index.md,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		37277A3B2F253C4C003278C4 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (37277A3F2F253D45003278C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 37277A402F253D45003278C4 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A40000000000000000000001 /* Frameworks */ = {
@@ -132,7 +109,6 @@
 				A50000000000000000000002 /* ThePlusSet */,
 				B50000000000000000000010 /* ThePlusSetTests */,
 				A50000000000000000000003 /* Products */,
-				37277A3B2F253C4C003278C4 /* docs */,
 			);
 			sourceTree = "<group>";
 		};
@@ -254,7 +230,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				37277A3B2F253C4C003278C4 /* docs */,
 			);
 			name = ThePlusSet;
 			productName = ThePlusSet;

@@ -211,7 +211,7 @@ struct OnboardingView: View {
 
     private func requestNotificationPermission() {
         Task {
-            await NotificationManager.shared.requestPermission()
+            _ = await NotificationManager.shared.requestPermission()
             settings.hasRequestedNotificationPermission = true
             try? modelContext.save()
         }
