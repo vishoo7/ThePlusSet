@@ -10,6 +10,7 @@ struct OnboardingView: View {
     @State private var deadliftTM: String = ""
     @State private var ohpTM: String = ""
     @State private var currentStep = 0
+    @FocusState private var isInputFocused: Bool
 
     let onComplete: () -> Void
 
@@ -111,6 +112,7 @@ struct OnboardingView: View {
             Spacer()
 
             Button {
+                isInputFocused = false
                 currentStep = 2
             } label: {
                 Text("Continue")
@@ -122,6 +124,14 @@ struct OnboardingView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .disabled(!allFieldsFilled)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    isInputFocused = false
+                }
+            }
         }
     }
 
@@ -173,6 +183,7 @@ struct OnboardingView: View {
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
+                .focused($isInputFocused)
             Text("lbs")
                 .foregroundStyle(.secondary)
         }
