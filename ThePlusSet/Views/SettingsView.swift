@@ -172,29 +172,6 @@ struct SettingsView: View {
                     }
                 }
 
-                // Training Max Settings
-                Section("Training Max") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("TM Percentage")
-                            Spacer()
-                            Text("\(Int(settings.trainingMaxPercentage * 100))%")
-                                .foregroundStyle(.secondary)
-                        }
-                        Slider(
-                            value: Binding(
-                                get: { settings.trainingMaxPercentage },
-                                set: { settings.trainingMaxPercentage = $0 }
-                            ),
-                            in: 0.80...1.0,
-                            step: 0.05
-                        )
-                        Text("Training Max = 1RM × \(Int(settings.trainingMaxPercentage * 100))%")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
                 // Rest Timer Section
                 Section("Rest Timer") {
                     NavigationLink {
@@ -487,7 +464,6 @@ struct SettingsView: View {
 
         // Program Settings
         text += "\n### Program Settings\n"
-        text += "- Training Max Percentage: \(Int(settings.trainingMaxPercentage * 100))%\n"
         text += "- BBB Percentage: \(Int(settings.bbbPercentage * 100))%\n"
 
         // Current Progress

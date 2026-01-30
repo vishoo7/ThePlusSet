@@ -4,6 +4,7 @@ import SwiftData
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var settingsArray: [AppSettings]
+    @Query private var existingTrainingMaxes: [TrainingMax]
 
     @State private var squat1RM: String = ""
     @State private var bench1RM: String = ""
@@ -95,10 +96,16 @@ struct OnboardingView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("The heaviest weight you can lift once for each exercise")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+            VStack(spacing: 8) {
+                Text("The absolute heaviest you can lift for a single rep")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Text("Not a training weight — your true max")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .multilineTextAlignment(.center)
 
             VStack(spacing: 16) {
                 oneRMInputRow(title: "Squat", value: $squat1RM)
@@ -219,19 +226,24 @@ struct OnboardingView: View {
     }
 
     private func saveAndComplete() {
+        // Remove any existing training maxes (in case of re-onboarding)
+        for tm in existingTrainingMaxes {
+            modelContext.delete(tm)
+        }
+
         // Create training maxes (TM = 1RM × training max percentage)
         let tmPercent = settings.trainingMaxPercentage
         if let squat = Double(squat1RM) {
-            modelContext.insert(TrainingMax(liftType: .squat, weight: squat * tmPercent))
+            modelContext.insert(TrainingMax(liftType: .squat, weight: squat * tmPercent, oneRepMax: squat))
         }
         if let bench = Double(bench1RM) {
-            modelContext.insert(TrainingMax(liftType: .bench, weight: bench * tmPercent))
+            modelContext.insert(TrainingMax(liftType: .bench, weight: bench * tmPercent, oneRepMax: bench))
         }
         if let deadlift = Double(deadlift1RM) {
-            modelContext.insert(TrainingMax(liftType: .deadlift, weight: deadlift * tmPercent))
+            modelContext.insert(TrainingMax(liftType: .deadlift, weight: deadlift * tmPercent, oneRepMax: deadlift))
         }
         if let ohp = Double(ohp1RM) {
-            modelContext.insert(TrainingMax(liftType: .overheadPress, weight: ohp * tmPercent))
+            modelContext.insert(TrainingMax(liftType: .overheadPress, weight: ohp * tmPercent, oneRepMax: ohp))
         }
 
         // Create cycle progress

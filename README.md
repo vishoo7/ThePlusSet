@@ -8,7 +8,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Configure 4 main lifts (Squat, Bench Press, Deadlift, Overhead Press) with starting training maxes
 - Customizable exercise order (drag to reorder directly in settings)
 - Specify available plates (default: 45, 35, 25, 10, 5, 2.5 lbs) and bar weight (default: 45 lbs)
-- Configurable Training Max percentage (80-100% of 1RM, default 90%)
+- Training Max automatically calculated as 90% of your 1RM
 - Configurable BBB percentage (default: 50%)
 - Adjustable rest timer durations for warmup, working sets, and BBB
 - Configurable timer chime sound (8 options with preview)
