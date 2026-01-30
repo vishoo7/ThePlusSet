@@ -5,10 +5,10 @@ struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var settingsArray: [AppSettings]
 
-    @State private var squatTM: String = ""
-    @State private var benchTM: String = ""
-    @State private var deadliftTM: String = ""
-    @State private var ohpTM: String = ""
+    @State private var squat1RM: String = ""
+    @State private var bench1RM: String = ""
+    @State private var deadlift1RM: String = ""
+    @State private var ohp1RM: String = ""
     @State private var currentStep = 0
     @FocusState private var isInputFocused: Bool
 
@@ -91,19 +91,20 @@ struct OnboardingView: View {
 
     private var trainingMaxStep: some View {
         VStack(spacing: 24) {
-            Text("Set Your Training Maxes")
+            Text("Enter Your 1 Rep Maxes")
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Enter 90% of your true 1RM for each lift")
+            Text("The heaviest weight you can lift once for each exercise")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
 
             VStack(spacing: 16) {
-                tmInputRow(title: "Squat", value: $squatTM)
-                tmInputRow(title: "Bench Press", value: $benchTM)
-                tmInputRow(title: "Deadlift", value: $deadliftTM)
-                tmInputRow(title: "Overhead Press", value: $ohpTM)
+                oneRMInputRow(title: "Squat", value: $squat1RM)
+                oneRMInputRow(title: "Bench Press", value: $bench1RM)
+                oneRMInputRow(title: "Deadlift", value: $deadlift1RM)
+                oneRMInputRow(title: "Overhead Press", value: $ohp1RM)
             }
             .padding()
             .background(Color(.secondarySystemBackground))
@@ -175,7 +176,7 @@ struct OnboardingView: View {
 
     // MARK: - Helper Views
 
-    private func tmInputRow(title: String, value: Binding<String>) -> some View {
+    private func oneRMInputRow(title: String, value: Binding<String>) -> some View {
         HStack {
             Text(title)
             Spacer()
@@ -201,10 +202,10 @@ struct OnboardingView: View {
     // MARK: - Computed Properties
 
     private var allFieldsFilled: Bool {
-        Double(squatTM) != nil &&
-        Double(benchTM) != nil &&
-        Double(deadliftTM) != nil &&
-        Double(ohpTM) != nil
+        Double(squat1RM) != nil &&
+        Double(bench1RM) != nil &&
+        Double(deadlift1RM) != nil &&
+        Double(ohp1RM) != nil
     }
 
     // MARK: - Actions
@@ -218,18 +219,19 @@ struct OnboardingView: View {
     }
 
     private func saveAndComplete() {
-        // Create training maxes
-        if let squat = Double(squatTM) {
-            modelContext.insert(TrainingMax(liftType: .squat, weight: squat))
+        // Create training maxes (TM = 1RM × training max percentage)
+        let tmPercent = settings.trainingMaxPercentage
+        if let squat = Double(squat1RM) {
+            modelContext.insert(TrainingMax(liftType: .squat, weight: squat * tmPercent))
         }
-        if let bench = Double(benchTM) {
-            modelContext.insert(TrainingMax(liftType: .bench, weight: bench))
+        if let bench = Double(bench1RM) {
+            modelContext.insert(TrainingMax(liftType: .bench, weight: bench * tmPercent))
         }
-        if let deadlift = Double(deadliftTM) {
-            modelContext.insert(TrainingMax(liftType: .deadlift, weight: deadlift))
+        if let deadlift = Double(deadlift1RM) {
+            modelContext.insert(TrainingMax(liftType: .deadlift, weight: deadlift * tmPercent))
         }
-        if let ohp = Double(ohpTM) {
-            modelContext.insert(TrainingMax(liftType: .overheadPress, weight: ohp))
+        if let ohp = Double(ohp1RM) {
+            modelContext.insert(TrainingMax(liftType: .overheadPress, weight: ohp * tmPercent))
         }
 
         // Create cycle progress
