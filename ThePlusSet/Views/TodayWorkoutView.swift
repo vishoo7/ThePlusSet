@@ -13,6 +13,8 @@ struct TodayWorkoutView: View {
     @EnvironmentObject var timerVM: TimerViewModel
     @StateObject private var workoutVM = WorkoutViewModel()
 
+    private let watchSession = PhoneSessionManager.shared
+
     @State private var currentWorkout: Workout?
     @State private var showTimerOverlay = false
     @State private var selectedSet: WorkoutSet?
@@ -154,6 +156,13 @@ struct TodayWorkoutView: View {
             .onAppear {
                 workoutVM.setModelContext(modelContext)
                 loadOrCreateWorkout()
+
+                // Update watch with current state
+                if let workout = currentWorkout {
+                    sendWorkoutStartedToWatch(workout)
+                } else {
+                    watchSession.sendWorkoutCleared()
+                }
             }
         }
     }
@@ -474,6 +483,37 @@ struct TodayWorkoutView: View {
         currentWorkout = workout
         selectedLiftType = nil
         try? modelContext.save()
+
+        // Send workout started to watch
+        sendWorkoutStartedToWatch(workout)
+    }
+
+    private func sendWorkoutStartedToWatch(_ workout: Workout) {
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+        guard let firstSet = orderedSets.first else { return }
+
+        let plates = PlateCalculator.platesPerSide(
+            targetWeight: firstSet.targetWeight,
+            availablePlates: settings.availablePlates,
+            barWeight: settings.barWeight
+        )
+
+        let nextSet = orderedSets.count > 1 ? orderedSets[1] : nil
+        let nextSetPlates = nextSet.map {
+            PlateCalculator.platesPerSide(
+                targetWeight: $0.targetWeight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+        }
+
+        watchSession.sendWorkoutStarted(
+            workout: WorkoutInfo.from(workout),
+            currentSet: SetInfo.from(firstSet, plates: plates),
+            nextSet: nextSet.map { SetInfo.from($0, plates: nextSetPlates ?? []) },
+            completedSetsCount: 0,
+            totalSetsCount: orderedSets.count
+        )
     }
 
     private func changeExercise(to newLiftType: LiftType) {
@@ -583,10 +623,44 @@ struct TodayWorkoutView: View {
         )
         showTimerOverlay = true
 
+        // Send set update to watch
+        if let workout = currentWorkout {
+            sendSetUpdateToWatch(workout: workout, nextSet: nextSet, nextSetPlates: nextSetPlates)
+        }
+
         // Check for PR on AMRAP sets
         if set.isAMRAP, let workout = currentWorkout {
             checkForPR(set: set, workout: workout, reps: reps)
         }
+    }
+
+    private func sendSetUpdateToWatch(workout: Workout, nextSet: WorkoutSet?, nextSetPlates: [Double]) {
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+        let completedCount = orderedSets.filter { $0.isComplete }.count
+
+        // Find the set after nextSet (for preview)
+        var upcomingSet: WorkoutSet? = nil
+        if let next = nextSet,
+           let nextIndex = orderedSets.firstIndex(where: { $0.id == next.id }),
+           nextIndex + 1 < orderedSets.count {
+            upcomingSet = orderedSets[nextIndex + 1]
+        }
+
+        let upcomingSetPlates = upcomingSet.map {
+            PlateCalculator.platesPerSide(
+                targetWeight: $0.targetWeight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+        }
+
+        watchSession.sendSetUpdated(
+            workout: WorkoutInfo.from(workout),
+            currentSet: nextSet.map { SetInfo.from($0, plates: nextSetPlates) },
+            nextSet: upcomingSet.map { SetInfo.from($0, plates: upcomingSetPlates ?? []) },
+            completedSetsCount: completedCount,
+            totalSetsCount: orderedSets.count
+        )
     }
 
     private func findNextIncompleteSet(after completedSet: WorkoutSet) -> WorkoutSet? {
@@ -641,6 +715,13 @@ struct TodayWorkoutView: View {
 
         workout.isComplete = true
         try? modelContext.save()
+
+        // Send workout completed to watch
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+        watchSession.sendWorkoutCompleted(
+            workout: WorkoutInfo.from(workout),
+            totalSetsCount: orderedSets.count
+        )
 
         // Check for progression after week 3
         if workout.weekNumber == 3 {

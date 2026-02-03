@@ -34,8 +34,18 @@
 		A10000000000000000000025 /* PRBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* PRBadgeView.swift */; };
 		A10000000000000000000026 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* AboutView.swift */; };
 		A10000000000000000000029 /* TimerTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* TimerTabView.swift */; };
+		A10000000000000000000030 /* PhoneSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* PhoneSessionManager.swift */; };
 		B10000000000000000000001 /* WendlerCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WendlerCalculatorTests.swift */; };
 		B10000000000000000000002 /* PlateCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* PlateCalculatorTests.swift */; };
+		C10000000000000000000001 /* PlusOneWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000001 /* PlusOneWatchApp.swift */; };
+		C10000000000000000000002 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000002 /* WatchSessionManager.swift */; };
+		C10000000000000000000003 /* NoWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000003 /* NoWorkoutView.swift */; };
+		C10000000000000000000004 /* ActiveSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000004 /* ActiveSetView.swift */; };
+		C10000000000000000000005 /* WatchTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000005 /* WatchTimerView.swift */; };
+		C10000000000000000000006 /* NextSetPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000006 /* NextSetPreview.swift */; };
+		C10000000000000000000007 /* WorkoutCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000007 /* WorkoutCompleteView.swift */; };
+		C10000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000008 /* Assets.xcassets */; };
+		C10000000000000000000009 /* PlusOneWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C30000000000000000000001 /* PlusOneWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,7 +56,28 @@
 			remoteGlobalIDString = A60000000000000000000001;
 			remoteInfo = ThePlusSet;
 		};
+		C50000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C60000000000000000000001;
+			remoteInfo = PlusOneWatch;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C70000000000000000000001 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				C10000000000000000000009 /* PlusOneWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* ThePlusSetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThePlusSetApp.swift; sourceTree = "<group>"; };
@@ -78,10 +109,22 @@
 		A20000000000000000000027 /* ThePlusSet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThePlusSet.entitlements; sourceTree = "<group>"; };
 		A20000000000000000000028 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* TimerTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTabView.swift; sourceTree = "<group>"; };
+		A20000000000000000000030 /* PhoneSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSessionManager.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* ThePlusSet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThePlusSet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000001 /* WendlerCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WendlerCalculatorTests.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* PlateCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlateCalculatorTests.swift; sourceTree = "<group>"; };
 		B30000000000000000000001 /* ThePlusSetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThePlusSetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C20000000000000000000001 /* PlusOneWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlusOneWatchApp.swift; sourceTree = "<group>"; };
+		C20000000000000000000002 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		C20000000000000000000003 /* NoWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoWorkoutView.swift; sourceTree = "<group>"; };
+		C20000000000000000000004 /* ActiveSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSetView.swift; sourceTree = "<group>"; };
+		C20000000000000000000005 /* WatchTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchTimerView.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		C20000000000000000000006 /* NextSetPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextSetPreview.swift; sourceTree = "<group>"; };
+		C20000000000000000000007 /* WorkoutCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCompleteView.swift; sourceTree = "<group>"; };
+		C20000000000000000000008 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C20000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C20000000000000000000010 /* PlusOneWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PlusOneWatch.entitlements; sourceTree = "<group>"; };
+		C30000000000000000000001 /* PlusOneWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlusOneWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 
@@ -100,6 +143,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C40000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -107,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				A50000000000000000000002 /* ThePlusSet */,
+				C50000000000000000000002 /* PlusOneWatch */,
 				B50000000000000000000010 /* ThePlusSetTests */,
 				A50000000000000000000003 /* Products */,
 			);
@@ -132,6 +183,7 @@
 			children = (
 				A30000000000000000000001 /* ThePlusSet.app */,
 				B30000000000000000000001 /* ThePlusSetTests.xctest */,
+				C30000000000000000000001 /* PlusOneWatch.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -180,6 +232,7 @@
 				A20000000000000000000011 /* WendlerCalculator.swift */,
 				A20000000000000000000012 /* PlateCalculator.swift */,
 				A20000000000000000000013 /* NotificationManager.swift */,
+				A20000000000000000000030 /* PhoneSessionManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -214,6 +267,39 @@
 			path = ThePlusSetTests;
 			sourceTree = "<group>";
 		};
+		C50000000000000000000002 /* PlusOneWatch */ = {
+			isa = PBXGroup;
+			children = (
+				C20000000000000000000001 /* PlusOneWatchApp.swift */,
+				C20000000000000000000009 /* Info.plist */,
+				C20000000000000000000010 /* PlusOneWatch.entitlements */,
+				C50000000000000000000003 /* Views */,
+				C50000000000000000000004 /* Connectivity */,
+				C20000000000000000000008 /* Assets.xcassets */,
+			);
+			path = PlusOneWatch;
+			sourceTree = "<group>";
+		};
+		C50000000000000000000003 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C20000000000000000000003 /* NoWorkoutView.swift */,
+				C20000000000000000000004 /* ActiveSetView.swift */,
+				C20000000000000000000005 /* WatchTimerView.swift */,
+				C20000000000000000000006 /* NextSetPreview.swift */,
+				C20000000000000000000007 /* WorkoutCompleteView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C50000000000000000000004 /* Connectivity */ = {
+			isa = PBXGroup;
+			children = (
+				C20000000000000000000002 /* WatchSessionManager.swift */,
+			);
+			path = Connectivity;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -224,10 +310,12 @@
 				A80000000000000000000001 /* Sources */,
 				A40000000000000000000001 /* Frameworks */,
 				A90000000000000000000001 /* Resources */,
+				C70000000000000000000001 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C60000000000000000000002 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 			);
@@ -253,6 +341,23 @@
 			productReference = B30000000000000000000001 /* ThePlusSetTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		C60000000000000000000001 /* PlusOneWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C70000000000000000000002 /* Build configuration list for PBXNativeTarget "PlusOneWatch" */;
+			buildPhases = (
+				C80000000000000000000001 /* Sources */,
+				C40000000000000000000001 /* Frameworks */,
+				C90000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PlusOneWatch;
+			productName = PlusOneWatch;
+			productReference = C30000000000000000000001 /* PlusOneWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -269,6 +374,9 @@
 					B60000000000000000000010 = {
 						CreatedOnToolsVersion = 15.0;
 						TestTargetID = A60000000000000000000001;
+					};
+					C60000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
@@ -287,6 +395,7 @@
 			targets = (
 				A60000000000000000000001 /* ThePlusSet */,
 				B60000000000000000000010 /* ThePlusSetTests */,
+				C60000000000000000000001 /* PlusOneWatch */,
 			);
 		};
 /* End PBXProject section */
@@ -297,6 +406,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C10000000000000000000008 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +450,7 @@
 				A10000000000000000000025 /* PRBadgeView.swift in Sources */,
 				A10000000000000000000026 /* AboutView.swift in Sources */,
 				A10000000000000000000029 /* TimerTabView.swift in Sources */,
+				A10000000000000000000030 /* PhoneSessionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +463,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C80000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C10000000000000000000001 /* PlusOneWatchApp.swift in Sources */,
+				C10000000000000000000002 /* WatchSessionManager.swift in Sources */,
+				C10000000000000000000003 /* NoWorkoutView.swift in Sources */,
+				C10000000000000000000004 /* ActiveSetView.swift in Sources */,
+				C10000000000000000000005 /* WatchTimerView.swift in Sources */,
+				C10000000000000000000006 /* NextSetPreview.swift in Sources */,
+				C10000000000000000000007 /* WorkoutCompleteView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -352,6 +484,11 @@
 			isa = PBXTargetDependency;
 			target = A60000000000000000000001 /* ThePlusSet */;
 			targetProxy = B50000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		C60000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C60000000000000000000001 /* PlusOneWatch */;
+			targetProxy = C50000000000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -587,6 +724,70 @@
 			};
 			name = Release;
 		};
+		CD0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PlusOneWatch/PlusOneWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YKB34T46U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PlusOneWatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "The Plus Set";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.vishal.plusone;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vishal.plusone.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		CD0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PlusOneWatch/PlusOneWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YKB34T46U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PlusOneWatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "The Plus Set";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.vishal.plusone;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vishal.plusone.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -613,6 +814,15 @@
 			buildConfigurations = (
 				BD0000000000000000000001 /* Debug */,
 				BD0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C70000000000000000000002 /* Build configuration list for PBXNativeTarget "PlusOneWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD0000000000000000000001 /* Debug */,
+				CD0000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

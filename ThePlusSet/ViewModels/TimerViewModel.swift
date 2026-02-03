@@ -16,6 +16,8 @@ class TimerViewModel: ObservableObject {
 
     private var timer: Timer?
     private let notificationManager = NotificationManager.shared
+    private let watchSession = PhoneSessionManager.shared
+    private var lastWatchUpdate: Int = 0
 
     var progress: Double {
         guard totalSeconds > 0 else { return 0 }
@@ -37,6 +39,7 @@ class TimerViewModel: ObservableObject {
         totalSeconds = seconds
         remainingSeconds = seconds
         isRunning = true
+        lastWatchUpdate = seconds
 
         // Store next set info
         self.nextSetWeight = nextSetWeight
@@ -46,6 +49,9 @@ class TimerViewModel: ObservableObject {
         self.nextSetType = nextSetType
 
         notificationManager.scheduleRestTimerNotification(seconds: seconds)
+
+        // Send initial timer update to watch
+        sendTimerUpdateToWatch()
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
@@ -85,6 +91,16 @@ class TimerViewModel: ObservableObject {
             remainingSeconds -= 1
         }
 
+        // Send throttled timer updates to watch
+        // Every 5 seconds normally, every 1 second when <= 10 seconds remaining
+        let shouldUpdate = remainingSeconds <= 10 ||
+                          (lastWatchUpdate - remainingSeconds >= 5)
+
+        if shouldUpdate {
+            sendTimerUpdateToWatch()
+            lastWatchUpdate = remainingSeconds
+        }
+
         if remainingSeconds == 0 {
             complete()
         }
@@ -95,5 +111,42 @@ class TimerViewModel: ObservableObject {
         timer = nil
         isRunning = false
         notificationManager.triggerTimerCompletion()
+
+        // Send final timer update to watch
+        sendTimerUpdateToWatch()
+    }
+
+    private func sendTimerUpdateToWatch() {
+        var nextSetInfo: SetInfo? = nil
+
+        if let weight = nextSetWeight,
+           let reps = nextSetReps {
+            let setType: String
+            if nextSetIsAMRAP {
+                setType = "AMRAP"
+            } else if nextSetType == "Warmup" {
+                setType = "Warmup"
+            } else if nextSetType == "BBB" {
+                setType = "BBB"
+            } else {
+                setType = "Working"
+            }
+
+            nextSetInfo = SetInfo(
+                setNumber: 0,
+                targetWeight: weight,
+                targetReps: reps,
+                isAMRAP: nextSetIsAMRAP,
+                setType: setType,
+                plates: nextSetPlates
+            )
+        }
+
+        watchSession.sendTimerUpdated(
+            remainingSeconds: remainingSeconds,
+            totalSeconds: totalSeconds,
+            isRunning: isRunning,
+            nextSet: nextSetInfo
+        )
     }
 }
