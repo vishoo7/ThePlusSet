@@ -109,7 +109,14 @@ struct TodayWorkoutView: View {
                         TimerView(
                             timerVM: timerVM,
                             onAddTime: { timerVM.addTime(seconds: $0) },
-                            onStop: { timerVM.stop(); showTimerOverlay = false },
+                            onStop: {
+                                timerVM.stop()
+                                showTimerOverlay = false
+                                // Small delay to ensure timer stop is processed before set refresh
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    refreshWatchState()
+                                }
+                            },
                             onDismiss: { showTimerOverlay = false }
                         )
                         .padding(.horizontal)
@@ -134,7 +141,7 @@ struct TodayWorkoutView: View {
                         selectedSet = nil
                     }
                 )
-                .presentationDetents([.medium])
+                .presentationDetents([.large])
             }
             .sheet(isPresented: $showingNewCycleSheet) {
                 newCycleSheet
@@ -611,21 +618,24 @@ struct TodayWorkoutView: View {
             nextSetType = ""
         }
 
-        // Set the chime sound from settings
-        NotificationManager.shared.chimeSoundID = SystemSoundID(settings.timerChimeSoundID)
-        timerVM.start(
-            seconds: restTime,
-            nextSetWeight: nextSet?.targetWeight,
-            nextSetReps: nextSet?.targetReps,
-            nextSetPlates: nextSetPlates,
-            nextSetIsAMRAP: nextSet?.isAMRAP ?? false,
-            nextSetType: nextSetType
-        )
-        showTimerOverlay = true
-
-        // Send set update to watch
+        // Send set update to watch BEFORE starting timer to ensure correct ordering
         if let workout = currentWorkout {
             sendSetUpdateToWatch(workout: workout, nextSet: nextSet, nextSetPlates: nextSetPlates)
+        }
+
+        // Only start rest timer if there's a next set
+        if nextSet != nil {
+            // Set the chime sound from settings
+            NotificationManager.shared.chimeSoundID = SystemSoundID(settings.timerChimeSoundID)
+            timerVM.start(
+                seconds: restTime,
+                nextSetWeight: nextSet?.targetWeight,
+                nextSetReps: nextSet?.targetReps,
+                nextSetPlates: nextSetPlates,
+                nextSetIsAMRAP: nextSet?.isAMRAP ?? false,
+                nextSetType: nextSetType
+            )
+            showTimerOverlay = true
         }
 
         // Check for PR on AMRAP sets
@@ -637,6 +647,49 @@ struct TodayWorkoutView: View {
     private func sendSetUpdateToWatch(workout: Workout, nextSet: WorkoutSet?, nextSetPlates: [Double]) {
         let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
         let completedCount = orderedSets.filter { $0.isComplete }.count
+
+        // Find the set after nextSet (for preview)
+        var upcomingSet: WorkoutSet? = nil
+        if let next = nextSet,
+           let nextIndex = orderedSets.firstIndex(where: { $0.id == next.id }),
+           nextIndex + 1 < orderedSets.count {
+            upcomingSet = orderedSets[nextIndex + 1]
+        }
+
+        let upcomingSetPlates = upcomingSet.map {
+            PlateCalculator.platesPerSide(
+                targetWeight: $0.targetWeight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+        }
+
+        watchSession.sendSetUpdated(
+            workout: WorkoutInfo.from(workout),
+            currentSet: nextSet.map { SetInfo.from($0, plates: nextSetPlates) },
+            nextSet: upcomingSet.map { SetInfo.from($0, plates: upcomingSetPlates ?? []) },
+            completedSetsCount: completedCount,
+            totalSetsCount: orderedSets.count
+        )
+    }
+
+    private func refreshWatchState() {
+        guard let workout = currentWorkout else {
+            watchSession.sendWorkoutCleared()
+            return
+        }
+
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+        let nextSet = orderedSets.first(where: { !$0.isComplete })
+        let completedCount = orderedSets.filter { $0.isComplete }.count
+
+        let nextSetPlates = nextSet.map {
+            PlateCalculator.platesPerSide(
+                targetWeight: $0.targetWeight,
+                availablePlates: settings.availablePlates,
+                barWeight: settings.barWeight
+            )
+        } ?? []
 
         // Find the set after nextSet (for preview)
         var upcomingSet: WorkoutSet? = nil

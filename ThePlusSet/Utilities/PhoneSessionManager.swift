@@ -101,6 +101,12 @@ class PhoneSessionManager: NSObject, ObservableObject {
         }
 
         sendMessage(payload)
+
+        // Update application context on timer start/stop for reliability
+        // (skip during tick updates for performance - only on state changes)
+        if (isRunning && remainingSeconds == totalSeconds) || !isRunning {
+            updateApplicationContext(payload)
+        }
     }
 
     // MARK: - Send Workout Completed

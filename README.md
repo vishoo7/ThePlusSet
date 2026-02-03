@@ -61,6 +61,15 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Tracks PRs on AMRAP sets based on estimated 1RM
 - Highlights when a new PR is hit with celebration animation
 
+### Apple Watch Companion App
+- Display-only companion app shows workout state on your wrist
+- View current set info: weight, reps, plates per side, set type
+- Rest timer with visual countdown ring (changes color as time runs out)
+- Haptic feedback at 30 seconds remaining and when timer completes
+- Preview of upcoming set during rest periods
+- Progress indicator showing completed/total sets
+- No interaction needed — all control stays on iPhone
+
 ### Data & Sync
 - SwiftData for local persistence
 - CloudKit sync for automatic backup and multi-device sync
@@ -76,6 +85,16 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 ThePlusSet/
 ├── ThePlusSet.xcodeproj/
 │   └── project.pbxproj
+├── PlusOneWatch/                    # watchOS companion app
+│   ├── PlusOneWatchApp.swift        # Watch app entry point
+│   ├── Connectivity/
+│   │   └── WatchSessionManager.swift # WatchConnectivity receiver
+│   └── Views/
+│       ├── ActiveSetView.swift      # Current set display
+│       ├── TimerView.swift          # Rest timer countdown
+│       ├── NextSetPreview.swift     # Upcoming set preview
+│       ├── NoWorkoutView.swift      # Idle state
+│       └── WorkoutCompleteView.swift # Completion screen
 └── ThePlusSet/
     ├── ThePlusSetApp.swift           # App entry point with SwiftData + CloudKit
     ├── Info.plist                    # App configuration
@@ -113,7 +132,8 @@ ThePlusSet/
     ├── Utilities/
     │   ├── WendlerCalculator.swift   # 5/3/1 percentages, Epley formula, progression
     │   ├── PlateCalculator.swift     # Weight rounding, plate math per side
-    │   └── NotificationManager.swift # Local notifications for timer
+    │   ├── NotificationManager.swift # Local notifications for timer
+    │   └── PhoneSessionManager.swift # WatchConnectivity sender
     │
     └── Resources/
         └── Assets.xcassets/
@@ -124,6 +144,7 @@ ThePlusSet/
 ## Requirements
 
 - iOS 17.0+
+- watchOS 10.0+ (for companion app)
 - Xcode 15.0+
 - Swift 5.9+
 

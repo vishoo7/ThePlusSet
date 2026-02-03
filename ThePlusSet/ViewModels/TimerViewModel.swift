@@ -72,6 +72,9 @@ class TimerViewModel: ObservableObject {
         nextSetIsAMRAP = false
         nextSetType = ""
         notificationManager.cancelRestTimerNotification()
+
+        // Notify watch that timer stopped
+        sendTimerUpdateToWatch()
     }
 
     func addTime(seconds: Int) {

@@ -151,6 +151,11 @@ extension WatchSessionManager {
 
         updateNextSet(from: message)
 
+        // Ensure workout state is active when timer is running
+        if isRunning && workoutState != .active {
+            workoutState = .active
+        }
+
         // Haptic feedback at 30 seconds
         if wasRunning && isRunning && previousRemaining > 30 && remainingSeconds <= 30 && remainingSeconds > 0 {
             playTimerWarningHaptic()
