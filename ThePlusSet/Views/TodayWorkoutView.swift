@@ -112,10 +112,7 @@ struct TodayWorkoutView: View {
                             onStop: {
                                 timerVM.stop()
                                 showTimerOverlay = false
-                                // Small delay to ensure timer stop is processed before set refresh
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    refreshWatchState()
-                                }
+                                // Watch refresh handled by onChange(of: timerVM.isRunning)
                             },
                             onDismiss: { showTimerOverlay = false }
                         )
@@ -169,6 +166,15 @@ struct TodayWorkoutView: View {
                     sendWorkoutStartedToWatch(workout)
                 } else {
                     watchSession.sendWorkoutCleared()
+                }
+            }
+            .onChange(of: timerVM.isRunning) { wasRunning, isRunning in
+                // When timer stops (completes naturally or via skip), refresh watch state
+                if wasRunning && !isRunning {
+                    // Small delay to ensure timer update is processed first
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        refreshWatchState()
+                    }
                 }
             }
         }

@@ -61,6 +61,12 @@ struct WatchTimerView: View {
                     Text(next.setType)
                         .font(.caption2)
                         .foregroundStyle(nextSetTypeColor(next.setType))
+
+                    // Plates per side
+                    Text(next.platesDisplay)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
             }
         }

@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 @MainActor
 class TimerViewModel: ObservableObject {
@@ -18,6 +19,29 @@ class TimerViewModel: ObservableObject {
     private let notificationManager = NotificationManager.shared
     private let watchSession = PhoneSessionManager.shared
     private var lastWatchUpdate: Int = 0
+
+    // Store end time to handle background suspension
+    private var timerEndDate: Date?
+    private var foregroundObserver: NSObjectProtocol?
+
+    init() {
+        // Listen for app returning to foreground to recalculate timer
+        foregroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.recalculateTimeFromEndDate()
+            }
+        }
+    }
+
+    deinit {
+        if let observer = foregroundObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
 
     var progress: Double {
         guard totalSeconds > 0 else { return 0 }
@@ -40,6 +64,9 @@ class TimerViewModel: ObservableObject {
         remainingSeconds = seconds
         isRunning = true
         lastWatchUpdate = seconds
+
+        // Store end time for background handling
+        timerEndDate = Date().addingTimeInterval(TimeInterval(seconds))
 
         // Store next set info
         self.nextSetWeight = nextSetWeight
@@ -66,6 +93,7 @@ class TimerViewModel: ObservableObject {
         isRunning = false
         remainingSeconds = 0
         totalSeconds = 0
+        timerEndDate = nil
         nextSetWeight = nil
         nextSetReps = nil
         nextSetPlates = []
@@ -77,11 +105,33 @@ class TimerViewModel: ObservableObject {
         sendTimerUpdateToWatch()
     }
 
+    /// Recalculate remaining time based on stored end date (called when app returns from background)
+    private func recalculateTimeFromEndDate() {
+        guard isRunning, let endDate = timerEndDate else { return }
+
+        let now = Date()
+        let remaining = endDate.timeIntervalSince(now)
+
+        if remaining <= 0 {
+            // Timer already expired while in background
+            remainingSeconds = 0
+            complete()
+        } else {
+            // Update remaining seconds based on actual time
+            remainingSeconds = Int(ceil(remaining))
+            sendTimerUpdateToWatch()
+        }
+    }
+
     func addTime(seconds: Int) {
         let newRemaining = max(1, remainingSeconds + seconds)
         let newTotal = max(1, totalSeconds + seconds)
         remainingSeconds = newRemaining
         totalSeconds = newTotal
+
+        // Update end date
+        timerEndDate = Date().addingTimeInterval(TimeInterval(newRemaining))
+
         // Reschedule notification
         notificationManager.cancelRestTimerNotification()
         if remainingSeconds > 0 {
@@ -149,6 +199,7 @@ class TimerViewModel: ObservableObject {
             remainingSeconds: remainingSeconds,
             totalSeconds: totalSeconds,
             isRunning: isRunning,
+            timerEndDate: timerEndDate,
             nextSet: nextSetInfo
         )
     }

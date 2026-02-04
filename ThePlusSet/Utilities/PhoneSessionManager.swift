@@ -87,6 +87,7 @@ class PhoneSessionManager: NSObject, ObservableObject {
         remainingSeconds: Int,
         totalSeconds: Int,
         isRunning: Bool,
+        timerEndDate: Date?,
         nextSet: SetInfo?
     ) {
         var payload: [String: Any] = [
@@ -96,17 +97,18 @@ class PhoneSessionManager: NSObject, ObservableObject {
             "isRunning": isRunning
         ]
 
+        // Send end date so watch can calculate time independently
+        if let endDate = timerEndDate {
+            payload["timerEndTimestamp"] = endDate.timeIntervalSince1970
+        }
+
         if let next = nextSet {
             payload["nextSet"] = next.toDictionary()
         }
 
         sendMessage(payload)
-
-        // Update application context on timer start/stop for reliability
-        // (skip during tick updates for performance - only on state changes)
-        if (isRunning && remainingSeconds == totalSeconds) || !isRunning {
-            updateApplicationContext(payload)
-        }
+        // Note: Don't update applicationContext with timer-only data
+        // as it would overwrite the full set info needed for display
     }
 
     // MARK: - Send Workout Completed

@@ -22,6 +22,9 @@ class WatchSessionManager: NSObject, ObservableObject {
     // Timer tick tracking for throttled updates
     private var lastTickUpdate: Date = .distantPast
 
+    // Local timer for independent countdown
+    private var localTimer: Timer?
+
     override init() {
         super.init()
         if WCSession.isSupported() {
@@ -46,6 +49,43 @@ class WatchSessionManager: NSObject, ObservableObject {
         playHaptic(.success)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             WKInterfaceDevice.current().play(.success)
+        }
+    }
+
+    // MARK: - Local Timer (for independent countdown when phone sleeps)
+
+    private func startLocalTimer() {
+        stopLocalTimer()
+        localTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.updateTimerFromEndDate()
+            }
+        }
+    }
+
+    private func stopLocalTimer() {
+        localTimer?.invalidate()
+        localTimer = nil
+    }
+
+    private func updateTimerFromEndDate() {
+        guard timerState.isRunning, let endDate = timerState.endDate else { return }
+
+        let previousRemaining = timerState.remainingSeconds
+        let remaining = max(0, Int(ceil(endDate.timeIntervalSinceNow)))
+
+        timerState.remainingSeconds = remaining
+
+        // Haptic at 30 seconds
+        if previousRemaining > 30 && remaining <= 30 && remaining > 0 {
+            playTimerWarningHaptic()
+        }
+
+        // Timer completed
+        if remaining == 0 && previousRemaining > 0 {
+            timerState.isRunning = false
+            stopLocalTimer()
+            playTimerCompleteHaptic()
         }
     }
 }
@@ -140,16 +180,30 @@ extension WatchSessionManager {
         let totalSeconds = message["totalSeconds"] as? Int ?? 0
         let isRunning = message["isRunning"] as? Bool ?? false
 
+        // Extract end date for independent time calculation
+        var endDate: Date? = nil
+        if let timestamp = message["timerEndTimestamp"] as? TimeInterval {
+            endDate = Date(timeIntervalSince1970: timestamp)
+        }
+
         let previousRemaining = timerState.remainingSeconds
         let wasRunning = timerState.isRunning
 
         timerState = TimerState(
             remainingSeconds: remainingSeconds,
             totalSeconds: totalSeconds,
-            isRunning: isRunning
+            isRunning: isRunning,
+            endDate: endDate
         )
 
         updateNextSet(from: message)
+
+        // Start or stop local timer based on running state
+        if isRunning && !wasRunning {
+            startLocalTimer()
+        } else if !isRunning && wasRunning {
+            stopLocalTimer()
+        }
 
         // Ensure workout state is active when timer is running
         if isRunning && workoutState != .active {
@@ -238,6 +292,7 @@ struct TimerState {
     var remainingSeconds: Int = 0
     var totalSeconds: Int = 0
     var isRunning: Bool = false
+    var endDate: Date? = nil  // Used for independent time calculation
 
     var progress: Double {
         guard totalSeconds > 0 else { return 0 }
@@ -248,6 +303,13 @@ struct TimerState {
         let minutes = remainingSeconds / 60
         let seconds = remainingSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    /// Calculate current remaining seconds based on end date
+    func calculatedRemainingSeconds() -> Int {
+        guard let endDate = endDate, isRunning else { return remainingSeconds }
+        let remaining = endDate.timeIntervalSinceNow
+        return max(0, Int(ceil(remaining)))
     }
 }
 

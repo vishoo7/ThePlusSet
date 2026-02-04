@@ -3,6 +3,8 @@
 ## Project Overview
 iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance work. Built with SwiftUI and SwiftData.
 
+**Priority:** iOS experience comes first. The watchOS companion app is secondary — never break iOS functionality to support the watch app.
+
 ## Development Workflow
 - Use `dev` branch for development work
 - Merge to `main` when features are complete and tested
