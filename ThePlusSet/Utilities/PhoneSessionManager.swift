@@ -8,8 +8,9 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
     private var session: WCSession?
 
-    // Current workout state for application context
+    // Current state for syncing
     private var lastWorkoutContext: [String: Any]?
+    private var lastTimerContext: [String: Any]?
 
     override init() {
         super.init()
@@ -26,6 +27,20 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
     var isPaired: Bool {
         session?.isPaired ?? false
+    }
+
+    /// Send full current state to watch (called when watch becomes reachable or needs sync)
+    func syncFullState() {
+        // Send last workout context
+        if let workoutContext = lastWorkoutContext {
+            sendMessage(workoutContext)
+        }
+        // Send last timer context if timer is running
+        if let timerContext = lastTimerContext,
+           let isRunning = timerContext["isRunning"] as? Bool,
+           isRunning {
+            sendMessage(timerContext)
+        }
     }
 
     // MARK: - Send Workout Started
@@ -51,6 +66,8 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
         sendMessage(payload)
         updateApplicationContext(payload)
+        // Backup delivery for workout start
+        transferInfo(payload)
     }
 
     // MARK: - Send Set Updated
@@ -79,6 +96,8 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
         sendMessage(payload)
         updateApplicationContext(payload)
+        // Backup delivery for set updates
+        transferInfo(payload)
     }
 
     // MARK: - Send Timer Updated
@@ -106,9 +125,16 @@ class PhoneSessionManager: NSObject, ObservableObject {
             payload["nextSet"] = next.toDictionary()
         }
 
+        // Store timer context for sync
+        lastTimerContext = payload
+
+        // Send via message (immediate if reachable)
         sendMessage(payload)
-        // Note: Don't update applicationContext with timer-only data
-        // as it would overwrite the full set info needed for display
+
+        // Also use transferUserInfo for timer start/stop to ensure delivery
+        if (isRunning && remainingSeconds == totalSeconds) || !isRunning {
+            transferInfo(payload)
+        }
     }
 
     // MARK: - Send Workout Completed
@@ -153,6 +179,14 @@ class PhoneSessionManager: NSObject, ObservableObject {
         }
     }
 
+    /// Transfer info is queued and delivered even when watch is not reachable
+    private func transferInfo(_ info: [String: Any]) {
+        guard let session = session, session.activationState == .activated else {
+            return
+        }
+        session.transferUserInfo(info)
+    }
+
     private func updateApplicationContext(_ context: [String: Any]) {
         guard let session = session, session.activationState == .activated else {
             return
@@ -192,12 +226,10 @@ extension PhoneSessionManager: WCSessionDelegate {
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         print("WCSession reachability changed: \(session.isReachable)")
 
-        // When watch becomes reachable, send last known context
+        // When watch becomes reachable, send full current state
         if session.isReachable {
             Task { @MainActor in
-                if let context = self.lastWorkoutContext {
-                    self.sendMessage(context)
-                }
+                self.syncFullState()
             }
         }
     }

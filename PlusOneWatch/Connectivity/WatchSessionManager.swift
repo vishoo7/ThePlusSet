@@ -117,6 +117,12 @@ extension WatchSessionManager: WCSessionDelegate {
             self.processApplicationContext(applicationContext)
         }
     }
+
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        Task { @MainActor in
+            self.processMessage(userInfo)
+        }
+    }
 }
 
 // MARK: - Message Processing
