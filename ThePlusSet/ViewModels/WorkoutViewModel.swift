@@ -23,7 +23,8 @@ class WorkoutViewModel: ObservableObject {
         let week = progress.currentWeek
 
         guard let tm = trainingMaxes.first(where: { $0.liftType == liftType }) else {
-            fatalError("Training max not found for \(liftType.rawValue)")
+            // Return an empty workout if training max is missing rather than crashing
+            return Workout(liftType: liftType, cycleNumber: progress.cycleNumber, weekNumber: week)
         }
 
         let workout = Workout(
@@ -124,7 +125,8 @@ class WorkoutViewModel: ObservableObject {
         after workout: Workout,
         trainingMaxes: [TrainingMax],
         progress: CycleProgress,
-        prs: [PersonalRecord]
+        prs: [PersonalRecord],
+        tmPercentage: Double = 0.90
     ) -> (newTMs: [LiftType: Double], newPRs: [(LiftType, PersonalRecord)])? {
         guard workout.weekNumber == 3,
               workout.isComplete,
@@ -139,8 +141,8 @@ class WorkoutViewModel: ObservableObject {
             reps: actualReps
         )
 
-        // Calculate new training max (90% of e1RM)
-        let newTM = WendlerCalculator.newTrainingMax(from: estimated1RM)
+        // Calculate new training max using configured TM percentage
+        let newTM = WendlerCalculator.newTrainingMax(from: estimated1RM, tmPercentage: tmPercentage)
 
         // Get current TM
         guard let currentTM = trainingMaxes.first(where: { $0.liftType == workout.liftType }) else {

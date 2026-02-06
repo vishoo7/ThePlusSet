@@ -805,7 +805,7 @@ struct TodayWorkoutView: View {
             weight: amrapSet.targetWeight,
             reps: actualReps
         )
-        let newTM = WendlerCalculator.newTrainingMax(from: estimated1RM)
+        let newTM = WendlerCalculator.newTrainingMax(from: estimated1RM, tmPercentage: settings.trainingMaxPercentage)
 
         if let currentTM = trainingMaxes.first(where: { $0.liftType == workout.liftType }) {
             if newTM > currentTM.weight {
