@@ -21,14 +21,6 @@ class PhoneSessionManager: NSObject, ObservableObject {
         }
     }
 
-    var isWatchReachable: Bool {
-        session?.isReachable ?? false
-    }
-
-    var isPaired: Bool {
-        session?.isPaired ?? false
-    }
-
     /// Send full current state to watch (called when watch becomes reachable or needs sync)
     func syncFullState() {
         // Send last workout context
@@ -66,8 +58,6 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
         sendMessage(payload)
         updateApplicationContext(payload)
-        // Backup delivery for workout start
-        transferInfo(payload)
     }
 
     // MARK: - Send Set Updated
@@ -96,8 +86,6 @@ class PhoneSessionManager: NSObject, ObservableObject {
 
         sendMessage(payload)
         updateApplicationContext(payload)
-        // Backup delivery for set updates
-        transferInfo(payload)
     }
 
     // MARK: - Send Timer Updated

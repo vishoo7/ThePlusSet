@@ -158,7 +158,6 @@ struct TodayWorkoutView: View {
                 }
             }
             .onAppear {
-                workoutVM.setModelContext(modelContext)
                 loadOrCreateWorkout()
 
                 // Update watch with current state
