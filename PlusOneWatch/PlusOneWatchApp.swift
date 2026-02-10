@@ -24,7 +24,6 @@ struct ContentView: View {
             case .active:
                 if sessionManager.timerState.isRunning {
                     WatchTimerView(
-                        timerState: sessionManager.timerState,
                         nextSet: sessionManager.nextSet
                     )
                 } else if let currentSet = sessionManager.currentSet,

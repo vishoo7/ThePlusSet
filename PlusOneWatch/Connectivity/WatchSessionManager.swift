@@ -19,12 +19,6 @@ class WatchSessionManager: NSObject, ObservableObject {
     @Published var completedSetsCount: Int = 0
     @Published var totalSetsCount: Int = 0
 
-    // Timer tick tracking for throttled updates
-    private var lastTickUpdate: Date = .distantPast
-
-    // Local timer for independent countdown
-    private var localTimer: Timer?
-
     override init() {
         super.init()
         if WCSession.isSupported() {
@@ -52,39 +46,19 @@ class WatchSessionManager: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Local Timer (for independent countdown when phone sleeps)
+    // MARK: - Timer Tick Handling (called by TimelineView in WatchTimerView)
 
-    private func startLocalTimer() {
-        stopLocalTimer()
-        localTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                self?.updateTimerFromEndDate()
-            }
-        }
-    }
-
-    private func stopLocalTimer() {
-        localTimer?.invalidate()
-        localTimer = nil
-    }
-
-    private func updateTimerFromEndDate() {
-        guard timerState.isRunning, let endDate = timerState.endDate else { return }
-
-        let previousRemaining = timerState.remainingSeconds
-        let remaining = max(0, Int(ceil(endDate.timeIntervalSinceNow)))
-
-        timerState.remainingSeconds = remaining
+    func handleTimerTick(previousRemaining: Int, currentRemaining: Int) {
+        timerState.remainingSeconds = currentRemaining
 
         // Haptic at 30 seconds
-        if previousRemaining > 30 && remaining <= 30 && remaining > 0 {
+        if previousRemaining > 30 && currentRemaining <= 30 && currentRemaining > 0 {
             playTimerWarningHaptic()
         }
 
         // Timer completed
-        if remaining == 0 && previousRemaining > 0 {
+        if currentRemaining == 0 && previousRemaining > 0 {
             timerState.isRunning = false
-            stopLocalTimer()
             playTimerCompleteHaptic()
         }
     }
@@ -203,13 +177,6 @@ extension WatchSessionManager {
         )
 
         updateNextSet(from: message)
-
-        // Start or stop local timer based on running state
-        if isRunning && !wasRunning {
-            startLocalTimer()
-        } else if !isRunning && wasRunning {
-            stopLocalTimer()
-        }
 
         // Ensure workout state is active when timer is running
         if isRunning && workoutState != .active {
