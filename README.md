@@ -64,7 +64,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 ### Apple Watch Companion App
 - Display-only companion app shows workout state on your wrist
 - View current set info: weight, reps, plates per side, set type
-- Rest timer with visual countdown ring (changes color as time runs out)
+- Rest timer with visual countdown ring using TimelineView (survives phone backgrounding and wrist transitions)
 - Haptic feedback at 30 seconds remaining and when timer completes
 - Preview of upcoming set during rest periods
 - Progress indicator showing completed/total sets
@@ -72,7 +72,8 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### Data & Sync
 - SwiftData for local persistence
-- CloudKit sync for automatic backup and multi-device sync
+- CloudKit sync for automatic backup and multi-device sync (iPhone and iPad)
+- iCloud sync status indicator in Settings
 
 ### Open Source & Transparency
 - Full source code available in this repository
