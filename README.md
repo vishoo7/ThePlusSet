@@ -44,6 +44,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 
 ### Workout Flexibility
 - Choose which exercise to start when beginning a workout
+- Do exercises in any order — the app suggests the next uncompleted exercise from your custom order
 - Change exercise mid-workout (only exercises not yet done this week are available)
 - Exercises already completed this week are automatically excluded from selection
 
@@ -57,7 +58,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Calendar view with red dots on days with logged workouts
 - Tap any date to see full workout details (lift, sets, weights, reps performed, notes)
 - Supports multiple workouts per day (all displayed in sequence)
-- Delete workouts from history (with confirmation)
+- Delete workouts from history (with confirmation; deleting the most recent workout rewinds cycle progress)
 - Tracks PRs on AMRAP sets based on estimated 1RM
 - Highlights when a new PR is hit with celebration animation
 
