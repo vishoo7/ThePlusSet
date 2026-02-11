@@ -6,7 +6,7 @@ final class CycleProgress {
     var cycleNumber: Int = 1
     var currentWeek: Int = 1  // 1-4
     var currentDay: Int = 0   // 0-3 (index into lift types)
-    var startDate: Date
+    var startDate: Date = Date()
 
     init() {
         self.cycleNumber = 1
