@@ -489,7 +489,7 @@ struct TodayWorkoutView: View {
             for: cycleProgress,
             trainingMaxes: trainingMaxes,
             settings: settings,
-            overrideLiftType: selectedLiftType
+            overrideLiftType: selectedLiftType ?? suggestedLiftType
         )
         modelContext.insert(workout)
         currentWorkout = workout
