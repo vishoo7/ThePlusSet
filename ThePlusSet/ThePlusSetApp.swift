@@ -1,6 +1,15 @@
 import SwiftUI
 import SwiftData
 
+/// Tracks whether CloudKit initialization succeeded or failed
+enum CloudKitStatus {
+    case success
+    case failed(String)
+    case notChecked
+
+    static var current: CloudKitStatus = .notChecked
+}
+
 @main
 struct ThePlusSetApp: App {
     let modelContainer: ModelContainer
@@ -24,8 +33,10 @@ struct ThePlusSetApp: App {
                 cloudKitDatabase: .automatic
             )
             modelContainer = try ModelContainer(for: schema, configurations: [cloudConfig])
+            CloudKitStatus.current = .success
         } catch {
             print("CloudKit failed, using local storage: \(error)")
+            CloudKitStatus.current = .failed(error.localizedDescription)
             do {
                 let localConfig = ModelConfiguration(
                     schema: schema,

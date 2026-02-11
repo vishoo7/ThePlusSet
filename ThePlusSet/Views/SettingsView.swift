@@ -268,9 +268,20 @@ struct SettingsView: View {
                     }
                     .disabled(isSyncing)
 
-                    Text("Data automatically syncs with iCloud")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    switch CloudKitStatus.current {
+                    case .success:
+                        Text("iCloud sync is active")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    case .failed(let error):
+                        Text("iCloud sync failed: \(error)")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    case .notChecked:
+                        Text("iCloud sync status unknown")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 // Export Section
