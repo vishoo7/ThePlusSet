@@ -51,6 +51,18 @@ final class CycleProgress {
         }
     }
 
+    func rewindToPreviousWorkout() {
+        currentDay -= 1
+        if currentDay < 0 {
+            currentDay = 3
+            currentWeek -= 1
+            if currentWeek < 1 {
+                currentWeek = 4
+                cycleNumber = max(1, cycleNumber - 1)
+            }
+        }
+    }
+
     func resetCycle() {
         cycleNumber = 1
         currentWeek = 1

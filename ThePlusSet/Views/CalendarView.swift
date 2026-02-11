@@ -6,6 +6,7 @@ struct CalendarView: View {
     @Query(sort: \Workout.date, order: .reverse) private var allWorkouts: [Workout]
     @Query private var personalRecords: [PersonalRecord]
     @Query private var settingsArray: [AppSettings]
+    @Query private var cycleProgressArray: [CycleProgress]
 
     @State private var selectedDate: Date = Date()
     @State private var displayedMonth: Date = Date()
@@ -70,6 +71,10 @@ struct CalendarView: View {
     // MARK: - Delete Workout
 
     private func deleteWorkout(_ workout: Workout) {
+        // Check if this is the most recent completed workout (rewind cycle progress if so)
+        let mostRecentWorkout = allWorkouts.filter { $0.isComplete }.first // already sorted by date descending
+        let shouldRewindProgress = mostRecentWorkout?.id == workout.id
+
         // Delete associated sets
         if let sets = workout.sets {
             for set in sets {
@@ -83,6 +88,11 @@ struct CalendarView: View {
 
         // Delete the workout
         modelContext.delete(workout)
+
+        // Rewind cycle progress if we deleted the most recent workout
+        if shouldRewindProgress, let cycleProgress = cycleProgressArray.first {
+            cycleProgress.rewindToPreviousWorkout()
+        }
 
         try? modelContext.save()
         workoutToDelete = nil
@@ -348,6 +358,7 @@ struct CalendarView: View {
             Workout.self,
             WorkoutSet.self,
             PersonalRecord.self,
-            AppSettings.self
+            AppSettings.self,
+            CycleProgress.self
         ])
 }
