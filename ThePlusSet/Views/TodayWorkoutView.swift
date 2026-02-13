@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import StoreKit
 import AudioToolbox
 
 struct TodayWorkoutView: View {
@@ -10,6 +11,7 @@ struct TodayWorkoutView: View {
     @Query(sort: \Workout.date, order: .reverse) private var allWorkouts: [Workout]
     @Query private var personalRecords: [PersonalRecord]
 
+    @Environment(\.requestReview) private var requestReview
     @EnvironmentObject var timerVM: TimerViewModel
     @StateObject private var workoutVM = WorkoutViewModel()
 
@@ -789,6 +791,15 @@ struct TodayWorkoutView: View {
         // Advance to next workout
         cycleProgress.advanceToNextWorkout()
         try? modelContext.save()
+
+        // Prompt for App Store review after 2 completed cycles (32 workouts)
+        if cycleProgress.cycleNumber >= 3 && !settings.hasPromptedForReview {
+            settings.hasPromptedForReview = true
+            try? modelContext.save()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                requestReview()
+            }
+        }
 
         // Reset state
         currentWorkout = nil

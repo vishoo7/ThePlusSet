@@ -15,6 +15,7 @@ final class AppSettings {
     var warmupRestSeconds: Int = 60
     var hasRequestedNotificationPermission: Bool = false
     var hasCompletedOnboarding: Bool = false
+    var hasPromptedForReview: Bool = false
     var timerChimeSoundID: Int = 1016  // System sound ID for timer completion
 
     var availablePlates: [Double] {

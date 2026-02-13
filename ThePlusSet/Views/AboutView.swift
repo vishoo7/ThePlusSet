@@ -83,6 +83,31 @@ struct AboutView: View {
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
+                // Spread the Word Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Label("Spread the Word", systemImage: "megaphone")
+                        .font(.headline)
+
+                    Text("Enjoying The Plus Set? Share it with your lifting buddies!")
+                        .font(.body)
+
+                    ShareLink(
+                        item: URL(string: "https://apps.apple.com/app/the-plus-set/id6758230246")!,
+                        subject: Text("The Plus Set"),
+                        message: Text("Check out The Plus Set — a simple, no-BS Wendler 5/3/1 workout tracker.")
+                    ) {
+                        HStack {
+                            Image(systemName: "square.and.arrow.up")
+                            Text("Share The Plus Set")
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+
                 // Donation Section
                 VStack(alignment: .leading, spacing: 12) {
                     Label("Support Development", systemImage: "heart.fill")
