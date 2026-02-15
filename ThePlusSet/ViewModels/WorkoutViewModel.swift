@@ -70,8 +70,8 @@ class WorkoutViewModel: ObservableObject {
             setIndex += 1
         }
 
-        // Generate BBB sets (skip on deload week)
-        if week != 4 {
+        // Generate BBB sets (skip on deload week or if BBB disabled)
+        if week != 4 && settings.bbbEnabled {
             let bbbSets = WendlerCalculator.calculateBBBSets(
                 trainingMax: tm.weight,
                 bbbPercentage: settings.bbbPercentage,

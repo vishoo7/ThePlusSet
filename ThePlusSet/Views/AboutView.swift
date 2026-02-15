@@ -47,15 +47,15 @@ struct AboutView: View {
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Why BBB Only
+                // Why BBB
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Why Just BBB?", systemImage: "clock")
+                    Label("About BBB", systemImage: "clock")
                         .font(.headline)
 
                     Text("""
-                    This app is designed for the time-constrained lifter. Boring But Big (5×10 at 50%) is the most popular and effective assistance template — it builds size while reinforcing technique.
+                    Boring But Big (5×10) is the most popular and effective 5/3/1 assistance template — it builds size while reinforcing technique.
 
-                    Future versions may include more accessory options, but for now: get in, do the work, get out. That's the Wendler way.
+                    BBB is enabled by default but can be toggled off in Settings if you prefer a shorter workout with just warmup and working sets.
                     """)
                     .font(.body)
                 }

@@ -127,20 +127,27 @@ struct SettingsView: View {
 
                 // BBB Settings
                 Section("Boring But Big") {
-                    HStack {
-                        Text("BBB Percentage")
-                        Spacer()
-                        Picker("", selection: Binding(
-                            get: { settings.bbbPercentage },
-                            set: { settings.bbbPercentage = $0 }
-                        )) {
-                            Text("40%").tag(0.40)
-                            Text("45%").tag(0.45)
-                            Text("50%").tag(0.50)
-                            Text("55%").tag(0.55)
-                            Text("60%").tag(0.60)
+                    Toggle("BBB Sets (5×10)", isOn: Binding(
+                        get: { settings.bbbEnabled },
+                        set: { settings.bbbEnabled = $0 }
+                    ))
+
+                    if settings.bbbEnabled {
+                        HStack {
+                            Text("BBB Percentage")
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { settings.bbbPercentage },
+                                set: { settings.bbbPercentage = $0 }
+                            )) {
+                                Text("40%").tag(0.40)
+                                Text("45%").tag(0.45)
+                                Text("50%").tag(0.50)
+                                Text("55%").tag(0.55)
+                                Text("60%").tag(0.60)
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.menu)
                     }
                 }
 
@@ -210,21 +217,23 @@ struct SettingsView: View {
                         }
                     }
 
-                    NavigationLink {
-                        TimerSettingsView(
-                            title: "BBB Sets Rest",
-                            seconds: Binding(
-                                get: { settings.bbbSetRestSeconds },
-                                set: { settings.bbbSetRestSeconds = $0 }
-                            ),
-                            presets: [60, 90, 120, 150, 180]
-                        )
-                    } label: {
-                        HStack {
-                            Text("BBB Sets")
-                            Spacer()
-                            Text(formatTime(settings.bbbSetRestSeconds))
-                                .foregroundStyle(.secondary)
+                    if settings.bbbEnabled {
+                        NavigationLink {
+                            TimerSettingsView(
+                                title: "BBB Sets Rest",
+                                seconds: Binding(
+                                    get: { settings.bbbSetRestSeconds },
+                                    set: { settings.bbbSetRestSeconds = $0 }
+                                ),
+                                presets: [60, 90, 120, 150, 180]
+                            )
+                        } label: {
+                            HStack {
+                                Text("BBB Sets")
+                                Spacer()
+                                Text(formatTime(settings.bbbSetRestSeconds))
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
 
