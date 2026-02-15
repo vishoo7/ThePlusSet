@@ -1,6 +1,6 @@
 # The Plus Set
 
-A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance work.
+A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with optional BBB (Boring But Big) assistance work.
 
 ## Features
 
@@ -9,6 +9,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
 - Customizable exercise order (drag to reorder directly in settings)
 - Specify available plates (default: 45, 35, 25, 10, 5, 2.5 lbs) and bar weight (default: 45 lbs)
 - Training Max automatically calculated as 90% of your 1RM
+- Toggle BBB (Boring But Big) sets on or off (default: on)
 - Configurable BBB percentage (default: 50%)
 - Adjustable rest timer durations for warmup, working sets, and BBB
 - Configurable timer chime sound (8 options with preview)
@@ -26,7 +27,7 @@ A clean, minimal iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring Bu
   - Week 4: Deload (40%, 50%, 60% — no warmup or BBB)
 - **Warmup sets:** 40% × 5, 50% × 5, 60% × 3 (skipped on deload week)
 - **Working sets:** 3 main sets per the weekly percentages
-- **BBB sets:** 5 × 10 at configured percentage (skipped on deload week)
+- **BBB sets:** 5 × 10 at configured percentage (skipped on deload week; can be disabled in Settings)
 
 ### Set Display & Logging
 - Each set displays: target weight, target reps, and plate breakdown per side
