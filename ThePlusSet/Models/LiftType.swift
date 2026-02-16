@@ -25,4 +25,23 @@ enum LiftType: String, Codable, CaseIterable, Identifiable {
         case .overheadPress: return 3
         }
     }
+
+    var storageKey: String {
+        switch self {
+        case .squat: return "squat"
+        case .bench: return "bench"
+        case .deadlift: return "deadlift"
+        case .overheadPress: return "overheadPress"
+        }
+    }
+
+    static func fromKey(_ key: String) -> LiftType? {
+        switch key {
+        case "squat": return .squat
+        case "bench": return .bench
+        case "deadlift": return .deadlift
+        case "overheadPress": return .overheadPress
+        default: return nil
+        }
+    }
 }

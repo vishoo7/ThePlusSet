@@ -21,7 +21,6 @@ struct TodayWorkoutView: View {
     @State private var showTimerOverlay = false
     @State private var selectedSet: WorkoutSet?
     @State private var showingNewCycleSheet = false
-    @State private var pendingNewTMs: [LiftType: Double] = [:]
     @State private var showingPRCelebration = false
     @State private var newPRLift: LiftType?
     @State private var showingLiftPicker = false
@@ -161,12 +160,11 @@ struct TodayWorkoutView: View {
             }
             .onAppear {
                 loadOrCreateWorkout()
+                refreshWatchState()
 
-                // Update watch with current state
-                if let workout = currentWorkout {
-                    sendWorkoutStartedToWatch(workout)
-                } else {
-                    watchSession.sendWorkoutCleared()
+                // Resume new cycle sheet if user killed app before confirming TM updates
+                if !cycleProgress.pendingNewTMs.isEmpty {
+                    showingNewCycleSheet = true
                 }
             }
             .onChange(of: timerVM.isRunning) { wasRunning, isRunning in
@@ -401,7 +399,7 @@ struct TodayWorkoutView: View {
 
                 VStack(spacing: 12) {
                     ForEach(LiftType.allCases) { liftType in
-                        if let newTM = pendingNewTMs[liftType] {
+                        if let newTM = cycleProgress.pendingNewTMs[liftType] {
                             let currentTM = trainingMaxes.first(where: { $0.liftType == liftType })?.weight ?? 0
                             HStack {
                                 Text(liftType.rawValue)
@@ -819,25 +817,25 @@ struct TodayWorkoutView: View {
 
         if let currentTM = trainingMaxes.first(where: { $0.liftType == workout.liftType }) {
             if newTM > currentTM.weight {
-                pendingNewTMs[workout.liftType] = newTM
+                cycleProgress.pendingNewTMs[workout.liftType] = newTM
             }
         }
 
         // Show new cycle sheet if we have pending TM updates
         // This happens after all 4 lifts in week 3 are done
-        if cycleProgress.currentDay == 3 && !pendingNewTMs.isEmpty {
+        if cycleProgress.currentDay == 3 && !cycleProgress.pendingNewTMs.isEmpty {
             showingNewCycleSheet = true
         }
     }
 
     private func applyNewTMs() {
-        for (liftType, newWeight) in pendingNewTMs {
+        for (liftType, newWeight) in cycleProgress.pendingNewTMs {
             if let tm = trainingMaxes.first(where: { $0.liftType == liftType }) {
                 tm.weight = newWeight
                 tm.updatedAt = Date()
             }
         }
-        pendingNewTMs.removeAll()
+        cycleProgress.pendingNewTMs = [:]
         try? modelContext.save()
     }
 }

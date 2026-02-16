@@ -7,12 +7,38 @@ final class CycleProgress {
     var currentWeek: Int = 1  // 1-4
     var currentDay: Int = 0   // 0-3 (index into lift types)
     var startDate: Date = Date()
+    var pendingNewTMsString: String = ""
 
     init() {
         self.cycleNumber = 1
         self.currentWeek = 1
         self.currentDay = 0
         self.startDate = Date()
+    }
+
+    @Transient
+    var pendingNewTMs: [LiftType: Double] {
+        get {
+            guard !pendingNewTMsString.isEmpty else { return [:] }
+            var result: [LiftType: Double] = [:]
+            for pair in pendingNewTMsString.split(separator: ",") {
+                let parts = pair.split(separator: ":")
+                guard parts.count == 2,
+                      let liftType = LiftType.fromKey(String(parts[0])),
+                      let weight = Double(parts[1]) else { continue }
+                result[liftType] = weight
+            }
+            return result
+        }
+        set {
+            if newValue.isEmpty {
+                pendingNewTMsString = ""
+            } else {
+                pendingNewTMsString = newValue.map { "\($0.key.storageKey):\($0.value)" }
+                    .sorted()
+                    .joined(separator: ",")
+            }
+        }
     }
 
     var weekDescription: String {
@@ -68,5 +94,6 @@ final class CycleProgress {
         currentWeek = 1
         currentDay = 0
         startDate = Date()
+        pendingNewTMsString = ""
     }
 }

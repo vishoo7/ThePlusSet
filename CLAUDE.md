@@ -57,6 +57,14 @@ To delete a tag: `git tag -d v1.0.X && git push origin --delete v1.0.X`
 2. Infer change type (bug fix → patch, new feature → minor, major overhaul → major) - only ask if uncertain
 3. Suggest the appropriate version/tag based on context - only ask if uncertain
 
+## Code Style
+- Prefer the simplest implementation approach first. Do not add hidden views, unnecessary wrappers, or complexity that will need to be stripped out.
+- If you catch yourself over-engineering, stop and rewrite with the minimal approach before continuing.
+
+## iOS UI Changes
+- A successful Xcode build does NOT mean the UI is correct. After UI changes, always remind the user to verify visually in the simulator or on device.
+- For App Store URLs, use the global format: `https://apps.apple.com/app/id{APP_ID}` (no country code prefix).
+
 ## Preferences
 - Update README.md when adding/changing features that affect user-facing functionality
 - Commit messages should be descriptive with bullet points for multiple changes
