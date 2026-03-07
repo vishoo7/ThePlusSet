@@ -163,7 +163,7 @@ struct TodayWorkoutView: View {
                 refreshWatchState()
 
                 // Resume new cycle sheet if user killed app before confirming TM updates
-                if !cycleProgress.pendingNewTMs.isEmpty {
+                if currentWorkout == nil && !cycleProgress.pendingNewTMs.isEmpty {
                     showingNewCycleSheet = true
                 }
             }
@@ -475,7 +475,18 @@ struct TodayWorkoutView: View {
     // MARK: - Actions
 
     private func loadOrCreateWorkout() {
-        // Check if there's an incomplete workout for today
+        // Resume an in-progress workout for the current cycle/week, regardless of date.
+        // This prevents duplicate starts when a workout was begun on a prior day.
+        if let existingWorkout = allWorkouts.first(where: {
+            !$0.isComplete &&
+            $0.cycleNumber == cycleProgress.cycleNumber &&
+            $0.weekNumber == cycleProgress.currentWeek
+        }) {
+            currentWorkout = existingWorkout
+            return
+        }
+
+        // Fallback: if progress is out of sync, still resume any incomplete workout from today.
         let today = Calendar.current.startOfDay(for: Date())
         if let existingWorkout = allWorkouts.first(where: {
             Calendar.current.isDate($0.date, inSameDayAs: today) && !$0.isComplete
@@ -821,9 +832,18 @@ struct TodayWorkoutView: View {
             }
         }
 
-        // Show new cycle sheet if we have pending TM updates
-        // This happens after all 4 lifts in week 3 are done
-        if cycleProgress.currentDay == 3 && !cycleProgress.pendingNewTMs.isEmpty {
+        // Show cycle-complete sheet only after all distinct week-3 lifts are complete.
+        // This avoids false triggers when currentDay is stale or corrupted.
+        let completedWeek3Lifts = Set(
+            allWorkouts.filter {
+                $0.isComplete &&
+                $0.cycleNumber == workout.cycleNumber &&
+                $0.weekNumber == 3
+            }
+            .map { $0.liftType }
+        )
+
+        if completedWeek3Lifts.count == LiftType.allCases.count && !cycleProgress.pendingNewTMs.isEmpty {
             showingNewCycleSheet = true
         }
     }
