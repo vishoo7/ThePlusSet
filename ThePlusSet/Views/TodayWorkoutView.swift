@@ -561,6 +561,8 @@ struct TodayWorkoutView: View {
         currentWorkout = newWorkout
         pendingNewLiftType = nil
         try? modelContext.save()
+
+        sendWorkoutStartedToWatch(newWorkout)
     }
 
     private func quickCompleteSet(_ set: WorkoutSet) {
