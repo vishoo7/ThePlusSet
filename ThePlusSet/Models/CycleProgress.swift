@@ -83,8 +83,15 @@ final class CycleProgress {
             currentDay = 3
             currentWeek -= 1
             if currentWeek < 1 {
-                currentWeek = 4
-                cycleNumber = max(1, cycleNumber - 1)
+                if cycleNumber <= 1 {
+                    // Can't rewind before the very beginning
+                    currentWeek = 1
+                    currentDay = 0
+                    cycleNumber = 1
+                } else {
+                    currentWeek = 4
+                    cycleNumber -= 1
+                }
             }
         }
     }

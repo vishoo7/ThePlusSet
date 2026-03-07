@@ -79,7 +79,7 @@ struct CalendarView: View {
         if let sets = workout.sets {
             for set in sets {
                 // Remove any PR records linked to this set
-                if let pr = personalRecords.first(where: { $0.workoutSetId == set.id }) {
+                for pr in personalRecords.filter({ $0.workoutSetId == set.id }) {
                     modelContext.delete(pr)
                 }
                 modelContext.delete(set)

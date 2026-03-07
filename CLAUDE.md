@@ -9,6 +9,7 @@ iOS app for tracking Wendler 5/3/1 workouts with BBB (Boring But Big) assistance
 - Use `dev` branch for development work
 - Merge to `main` when features are complete and tested
 - Push both branches after merging
+- **Always build and run tests locally before pushing/tagging** — don't skip straight to push
 
 ## Release Workflow (Xcode Cloud)
 Xcode Cloud is configured for **tag-based builds only** (pattern: `v*`).

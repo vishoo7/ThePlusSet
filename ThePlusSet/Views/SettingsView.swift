@@ -322,7 +322,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Version")
                         Spacer()
-                        Text("1.0.0")
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown")
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -732,6 +732,7 @@ struct TimerSettingsView: View {
 
 struct TMEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     let trainingMaxes: [TrainingMax]
 
     @State private var editedValues: [LiftType: Double] = [:]
@@ -769,6 +770,7 @@ struct TMEditorSheet: View {
                                 tm.updatedAt = Date()
                             }
                         }
+                        try? modelContext.save()
                         dismiss()
                     }
                 }

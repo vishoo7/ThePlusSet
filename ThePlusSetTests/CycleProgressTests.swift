@@ -112,12 +112,12 @@ final class CycleProgressTests: XCTestCase {
     }
 
     func testRewindAtAbsoluteStart() {
-        // Edge case: rewinding at C1W1D0 shouldn't go to cycle 0
+        // Edge case: rewinding at C1W1D0 should clamp to start, not wrap to W4D3
         let progress = CycleProgress()
         progress.rewindToPreviousWorkout()
-        XCTAssertEqual(progress.cycleNumber, 1) // max(1, 0) = 1
-        XCTAssertEqual(progress.currentWeek, 4)
-        XCTAssertEqual(progress.currentDay, 3)
+        XCTAssertEqual(progress.cycleNumber, 1)
+        XCTAssertEqual(progress.currentWeek, 1)
+        XCTAssertEqual(progress.currentDay, 0)
     }
 
     func testRewindFromWeek3ToWeek2() {
