@@ -20,6 +20,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>The Plus Set uses HealthKit to keep your workout active in the background so the app stays responsive while you train.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>The Plus Set uses HealthKit to keep your workout active in the background. No health data is recorded.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -27,6 +31,10 @@
 	</array>
 	<key>WKApplication</key>
 	<true/>
+	<key>WKBackgroundModes</key>
+	<array>
+		<string>workout-processing</string>
+	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.vishal.plusone</string>
 	<key>WKRunsIndependentlyOfCompanionApp</key>

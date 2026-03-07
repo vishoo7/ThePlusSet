@@ -139,6 +139,7 @@ extension WatchSessionManager {
 
         workoutState = .active
         playHaptic(.start)
+        WorkoutSessionManager.shared.startSession()
     }
 
     private func processSetUpdated(_ message: [String: Any]) {
@@ -153,6 +154,9 @@ extension WatchSessionManager {
         } else {
             workoutState = .active
         }
+
+        // Ensure workout session is running (handles app relaunch mid-workout)
+        WorkoutSessionManager.shared.startSession()
     }
 
     private func processTimerUpdated(_ message: [String: Any]) {
@@ -204,6 +208,7 @@ extension WatchSessionManager {
         timerState = TimerState()
 
         playHaptic(.success)
+        WorkoutSessionManager.shared.endSession()
     }
 
     private func processWorkoutCleared() {
@@ -214,6 +219,7 @@ extension WatchSessionManager {
         completedSetsCount = 0
         totalSetsCount = 0
         timerState = TimerState()
+        WorkoutSessionManager.shared.endSession()
     }
 
     // MARK: - Helper Methods
