@@ -85,8 +85,8 @@ struct TodayWorkoutView: View {
                             // Notes section
                             notesSection(workout: workout)
 
-                            // Complete workout button
-                            if (workout.sets ?? []).allSatisfy({ $0.isComplete }) {
+                            // Complete workout button (available once all main sets are done)
+                            if (workout.warmupSets + workout.mainSets).allSatisfy({ $0.isComplete }) {
                                 completeWorkoutButton
                             }
                         } else {
