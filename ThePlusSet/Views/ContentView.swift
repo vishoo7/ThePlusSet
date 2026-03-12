@@ -62,6 +62,11 @@ struct MainTabView: View {
                     Label("Calendar", systemImage: "calendar")
                 }
 
+            ProgressView()
+                .tabItem {
+                    Label("Progress", systemImage: "chart.line.uptrend.xyaxis")
+                }
+
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
