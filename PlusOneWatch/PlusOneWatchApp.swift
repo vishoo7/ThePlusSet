@@ -32,7 +32,10 @@ struct ContentView: View {
                         workoutInfo: workoutInfo,
                         currentSet: currentSet,
                         completedSetsCount: sessionManager.completedSetsCount,
-                        totalSetsCount: sessionManager.totalSetsCount
+                        totalSetsCount: sessionManager.totalSetsCount,
+                        onComplete: {
+                            sessionManager.sendCompleteCurrentSet()
+                        }
                     )
                 } else {
                     NoWorkoutView()

@@ -5,6 +5,7 @@ struct ActiveSetView: View {
     let currentSet: WatchSetInfo
     let completedSetsCount: Int
     let totalSetsCount: Int
+    var onComplete: (() -> Void)? = nil
 
     var body: some View {
         ScrollView {
@@ -85,6 +86,18 @@ struct ActiveSetView: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .multilineTextAlignment(.center)
+                }
+
+                // Done button
+                if let onComplete = onComplete {
+                    Button(action: onComplete) {
+                        Text("Done")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.green)
+                    .padding(.top, 8)
                 }
             }
             .padding(.horizontal)

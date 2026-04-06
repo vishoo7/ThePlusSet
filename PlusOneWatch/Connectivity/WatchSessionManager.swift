@@ -46,6 +46,32 @@ class WatchSessionManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Send to Phone
+
+    /// Send set completion to phone (quick complete with target reps)
+    func sendCompleteCurrentSet() {
+        guard let currentSet = currentSet else { return }
+
+        let payload: [String: Any] = [
+            "type": "completeSet",
+            "setNumber": currentSet.setNumber
+        ]
+
+        guard let session = session, session.activationState == .activated else { return }
+
+        // Use sendMessage for immediate delivery when reachable
+        if session.isReachable {
+            session.sendMessage(payload, replyHandler: nil) { error in
+                print("Watch sendCompleteCurrentSet error: \(error.localizedDescription)")
+            }
+        } else {
+            // Fall back to transferUserInfo for queued delivery
+            session.transferUserInfo(payload)
+        }
+
+        playHaptic(.click)
+    }
+
     // MARK: - Timer Tick Handling (called by TimelineView in WatchTimerView)
 
     func handleTimerTick(previousRemaining: Int, currentRemaining: Int) {

@@ -35,6 +35,10 @@ class PhoneSessionManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Notifications (watch → phone)
+
+    static let watchDidCompleteSetNotification = Notification.Name("watchDidCompleteSet")
+
     // MARK: - Send Workout Started
 
     func sendWorkoutStarted(
@@ -201,6 +205,18 @@ extension PhoneSessionManager: WCSessionDelegate {
         }
     }
 
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        Task { @MainActor in
+            self.processWatchMessage(message)
+        }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        Task { @MainActor in
+            self.processWatchMessage(userInfo)
+        }
+    }
+
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
         print("WCSession became inactive")
     }
@@ -219,6 +235,26 @@ extension PhoneSessionManager: WCSessionDelegate {
             Task { @MainActor in
                 self.syncFullState()
             }
+        }
+    }
+}
+
+// MARK: - Watch Message Processing
+
+extension PhoneSessionManager {
+    private func processWatchMessage(_ message: [String: Any]) {
+        guard let type = message["type"] as? String else { return }
+
+        switch type {
+        case "completeSet":
+            let setNumber = message["setNumber"] as? Int ?? 0
+            NotificationCenter.default.post(
+                name: PhoneSessionManager.watchDidCompleteSetNotification,
+                object: nil,
+                userInfo: ["setNumber": setNumber]
+            )
+        default:
+            break
         }
     }
 }

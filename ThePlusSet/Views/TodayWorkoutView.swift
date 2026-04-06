@@ -176,6 +176,9 @@ struct TodayWorkoutView: View {
                     }
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: PhoneSessionManager.watchDidCompleteSetNotification)) { notification in
+                handleWatchSetCompletion(notification)
+            }
         }
     }
 
@@ -848,6 +851,21 @@ struct TodayWorkoutView: View {
         if completedWeek3Lifts.count == LiftType.allCases.count && !cycleProgress.pendingNewTMs.isEmpty {
             showingNewCycleSheet = true
         }
+    }
+
+    private func handleWatchSetCompletion(_ notification: Notification) {
+        guard let workout = currentWorkout else { return }
+        let setNumber = notification.userInfo?["setNumber"] as? Int ?? 0
+
+        let orderedSets = workout.warmupSets + workout.mainSets + workout.bbbSets
+
+        // Find the next incomplete set matching the set number from the watch
+        guard let set = orderedSets.first(where: { $0.setNumber == setNumber && !$0.isComplete }) else { return }
+
+        // Only allow completing the next set in order (same guard as the UI)
+        guard set.id == nextIncompleteSetId else { return }
+
+        quickCompleteSet(set)
     }
 
     private func applyNewTMs() {
